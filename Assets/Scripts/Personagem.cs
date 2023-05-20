@@ -99,7 +99,7 @@ public class Personagem : MonoBehaviour
         else
         {
             float velocidadeGiroParaPedra = 1f;
-            float rapidezEmpurrar = 2.5f;
+            float rapidezEmpurrar = 3f;
 
             RotacionarEmDirecaoAAlgo(frentePedra, velocidadeGiroParaPedra);
 

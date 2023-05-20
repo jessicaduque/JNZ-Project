@@ -6,7 +6,7 @@ public class Pedra : MonoBehaviour
 {
     GameObject Player;
     Vector3 frente;
-    float rapidez = 2.5f;
+    float rapidez = 3f;
 
     void Start()
     {
