@@ -168,28 +168,11 @@ public class Personagem : MonoBehaviour
             }
         }
 
-        /*
-        // Verificação se rotação do Player em relação a pedra está dentro de escopo limitado
-        float rotacao1 = quantRotacionar * 90 + 45;
-        if(rotacao1 > 359)
-        {
-            rotacao1 -= 360;
-        }
-        float rotacao2 = quantRotacionar * 90 - 45;
-        if (rotacao2 < 0)
-        {
-            rotacao2 = 360 + rotacao2;
-        }
-
-        Debug.Log(transform.rotation.eulerAngles.y);
-        Debug.Log(rotacao1);
-        Debug.Log(rotacao2);
-
-        if (transform.rotation.eulerAngles.y - 180 < rotacao1 && transform.rotation.eulerAngles.y - 180 > rotacao2)
+        // Verificação de que a rotação do player está dentro do escopo mínimo esperado para poder empurrar a pedra
+        if(Vector3.Angle(transform.forward, -direction) > 45)
         {
             return false;
         }
-        */
 
         // Verificação de se há pedras para onde será empurrado
         RaycastHit meuRay;
