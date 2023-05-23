@@ -8,12 +8,11 @@ public class Personagem : MonoBehaviour
 
     [SerializeField]
     float sensibilidadeGiro = 100f;
-
     [SerializeField]
     float velocidadeAndar = 4;
-
     [SerializeField]
     bool esperandoSegundos = false;
+    [SerializeField]
     float forcaPulo = 1000;
     public GameObject pezinho;
     bool estaNoChao = true;
@@ -26,6 +25,7 @@ public class Personagem : MonoBehaviour
 
     // Sistema checkpoints
     Vector3[] infoCheckpoint = new Vector3[2];
+    GameObject[] PedrasParaReset;
 
     // Puzzle das pedras
     bool comTouro = false;
@@ -121,8 +121,9 @@ public class Personagem : MonoBehaviour
             }
             else
             {
-                infoCheckpoint[0] = colidiu.gameObject.GetComponent<Checkpoint>().Posicao;
-                infoCheckpoint[1] = colidiu.gameObject.GetComponent<Checkpoint>().Rotacao;
+                infoCheckpoint[0] = new Vector3(colidiu.gameObject.transform.position.x, transform.position.y, colidiu.gameObject.transform.position.z);
+                infoCheckpoint[1] = colidiu.gameObject.transform.eulerAngles;
+                PedrasParaReset = colidiu.gameObject.GetComponent<Checkpoint>().pedrasParaResetar;
                 Destroy(colidiu.gameObject);
             }
         }
@@ -141,7 +142,7 @@ public class Personagem : MonoBehaviour
             if (Pedra != null && Input.GetKeyDown(KeyCode.E) && ChecarSePodeMoverPedra(Pedra) && EncontrarFrentePedra(Pedra) != new Vector3(0, 0, 0))
             {
                 frentePedra = EncontrarFrentePedra(Pedra);
-                Pedra.GetComponent<Pedra>().enabled = true;
+                Pedra.GetComponent<Pedra>().MudarEstadoMovimento();
                 PedraPosInicial = Pedra.transform.position;
                 empurrandoPedra = true;
                 
@@ -160,7 +161,7 @@ public class Personagem : MonoBehaviour
             if (Mathf.Abs((Pedra.transform.position - PedraPosInicial).magnitude) > 8f)
             {
                 Pedra.transform.position = new Vector3(Mathf.Round(Pedra.transform.position.x), Pedra.transform.position.y, Mathf.Round(Pedra.transform.position.z));
-                Pedra.GetComponent<Pedra>().enabled = false;
+                Pedra.GetComponent<Pedra>().MudarEstadoMovimento();
                 empurrandoPedra = false;
             }
         }
@@ -289,9 +290,15 @@ public class Personagem : MonoBehaviour
                 if(infoCheckpoint[0] != new Vector3(0f, 0f, 0f))
                 {
                     transform.position = infoCheckpoint[0];
-                    transform.Rotate(infoCheckpoint[1]);
-                    segundosParaEsperar = 2f;
+                    transform.eulerAngles = infoCheckpoint[1];
+                    segundosParaEsperar = 1.2f;
                     Corpo.velocity = new Vector3(0f, 0f, 0f);
+
+                    for(int i=0; i < PedrasParaReset.Length; i++)
+                    {
+                        PedrasParaReset[i].transform.position = PedrasParaReset[i].GetComponent<Pedra>().PosicaoInicial;
+                    }
+
                     esperandoSegundos = true;
                 }
             }

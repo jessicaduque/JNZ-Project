@@ -4,13 +4,10 @@ using UnityEngine;
 
 public class Checkpoint : MonoBehaviour
 {
-    public Vector3 Posicao;
-    public Vector3 Rotacao;
     public bool UltimoCheck;
+    public GameObject[] pedrasParaResetar;
 
     private void Start()
     {
-        Posicao = GetComponent<Transform>().position;
-        Rotacao = GetComponent<Transform>().rotation.eulerAngles;
     }
 }
