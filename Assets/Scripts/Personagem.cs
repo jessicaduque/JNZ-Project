@@ -13,9 +13,19 @@ public class Personagem : MonoBehaviour
     float velocidadeAndar = 4;
 
     [SerializeField]
+    bool esperandoSegundos = false;
     float forcaPulo = 1000;
     public GameObject pezinho;
     bool estaNoChao = true;
+
+    float tempo = 0.0f;
+    float segundosParaEsperar;
+
+    // Estado da fase
+    enum EstadoFase { SemPuzzleSemDom = 0, PuzzlePedrasSemDom = 1, PuzzlePedrasComDom = 2, PuzzleRuinas = 3, SemPuzzleComDom = 4};
+
+    // Sistema checkpoints
+    Vector3[] infoCheckpoint = new Vector3[2];
 
     // Puzzle das pedras
     bool comTouro = false;
@@ -23,7 +33,6 @@ public class Personagem : MonoBehaviour
     Transform Pedra;
     Vector3 PedraPosInicial;
     public Vector3 frentePedra;
-    int quantRotacionar;
 
 
     void Start()
@@ -33,19 +42,44 @@ public class Personagem : MonoBehaviour
 
     void Update()
     {
-        // O player só pode se mover se não estiver no meio de empurrar uma pedra
-        if (!empurrandoPedra)
+        // Se necessário esperar segundos sem movimento nenhum, o controle está aqui
+        if (esperandoSegundos)
         {
-            Mover();
-            Pular();
+            EsperarSegundos(segundosParaEsperar);
         }
 
+        // O player só pode se mover se não estiver no meio de empurrar uma pedra
+        ControleMovimento();
+
+        // Puzzle das pedras
+        ResetarPuzzlePedras();
         EmpurrarPedra();
+    }
+
+    void ControleMovimento()
+    {
+        if (!esperandoSegundos)
+        {
+            if (!empurrandoPedra)
+            {
+                Pular();
+                Mover();
+            }
+        }
     }
 
     void Mover()
     {
-        float velocidadeZ = Input.GetAxis("Vertical") * velocidadeAndar;
+        float velocidadeZ;
+        if (Input.GetKey(KeyCode.LeftShift))
+        {
+            velocidadeZ = Input.GetAxis("Vertical") * velocidadeAndar * 1.7f;
+        }
+        else
+        {
+            velocidadeZ = Input.GetAxis("Vertical") * velocidadeAndar;
+        }
+        
         float velocidadeX = 0;
         Vector3 velocidadeCorrigida = velocidadeX * transform.right + velocidadeZ * transform.forward;
 
@@ -74,6 +108,23 @@ public class Personagem : MonoBehaviour
         if (colidiu.gameObject.tag == "Chao")
         {
             estaNoChao = true;
+        }
+
+        if (colidiu.gameObject.tag == "Checkpoint")
+        {
+            if (colidiu.gameObject.GetComponent<Checkpoint>().UltimoCheck)
+            {
+                infoCheckpoint[0] = new Vector3(0, 0, 0);
+                infoCheckpoint[1] = new Vector3(0, 0, 0);
+                Destroy(colidiu.gameObject);
+
+            }
+            else
+            {
+                infoCheckpoint[0] = colidiu.gameObject.GetComponent<Checkpoint>().Posicao;
+                infoCheckpoint[1] = colidiu.gameObject.GetComponent<Checkpoint>().Rotacao;
+                Destroy(colidiu.gameObject);
+            }
         }
     }
     void RotacionarEmDirecaoAAlgo(Vector3 ondeOlhar, float velocidadeGiro)
@@ -204,12 +255,10 @@ public class Personagem : MonoBehaviour
         {
             if (direction.x > 0)
             {
-                quantRotacionar = 1;
                 return new Vector3(-1, 0, 0);
             }
             else
             {
-                quantRotacionar = 3;
                 return new Vector3(1, 0, 0);
             }
         }
@@ -218,12 +267,10 @@ public class Personagem : MonoBehaviour
         {
             if (direction.z > 0)
             {
-                quantRotacionar = 2;
                 return new Vector3(0, 0, -1);
             }
             else
             {
-                quantRotacionar = 0;
                 return new Vector3(0, 0, 1);
             }
         }
@@ -232,4 +279,44 @@ public class Personagem : MonoBehaviour
             return new Vector3(0, 0, 0);
         }
     }
+
+    void ResetarPuzzlePedras()
+    {
+        if(PegarEstadoFase() == (int)EstadoFase.PuzzlePedrasSemDom || PegarEstadoFase() == (int)EstadoFase.PuzzlePedrasComDom)
+        {
+            if (Input.GetKeyDown(KeyCode.P))
+            {
+                if(infoCheckpoint[0] != new Vector3(0f, 0f, 0f))
+                {
+                    transform.position = infoCheckpoint[0];
+                    transform.Rotate(infoCheckpoint[1]);
+                    segundosParaEsperar = 2f;
+                    Corpo.velocity = new Vector3(0f, 0f, 0f);
+                    esperandoSegundos = true;
+                }
+            }
+        }
+    }
+
+    int PegarEstadoFase()
+    {
+        return GameObject.FindGameObjectWithTag("GameController").GetComponent<GerenciadorFase>().GetEstadoFase();
+    }
+
+    bool EsperarSegundos(float segundos)
+    {
+        tempo += Time.deltaTime;
+        if(tempo > segundos)
+        {
+            tempo = 0.0f;
+            esperandoSegundos = false;
+            return true;
+        }
+        else
+        {
+            esperandoSegundos = true;
+            return false;
+        }
+    }
+
 }
