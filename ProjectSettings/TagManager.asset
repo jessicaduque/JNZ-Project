@@ -9,6 +9,7 @@ TagManager:
   - Parede
   - PedraPesada
   - Pilar
+  - Checkpoint
   layers:
   - Default
   - TransparentFX
