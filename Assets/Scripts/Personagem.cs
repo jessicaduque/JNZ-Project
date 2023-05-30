@@ -7,7 +7,7 @@ public class Personagem : MonoBehaviour
     private Rigidbody Corpo;
 
     [SerializeField]
-    float sensibilidadeGiro = 100f;
+    float sensibilidadeGiro = 500f;
     [SerializeField]
     float velocidadeAndar = 4;
     [SerializeField]
@@ -15,7 +15,10 @@ public class Personagem : MonoBehaviour
     [SerializeField]
     float forcaPulo = 1000;
     public GameObject pezinho;
-    bool estaNoChao = true;
+    public bool estaNoChao = true;
+    bool movimentoPermitido = true;
+    bool touroDomado = false;
+
 
     float tempo = 0.0f;
     float segundosParaEsperar;
@@ -28,7 +31,6 @@ public class Personagem : MonoBehaviour
     GameObject[] PedrasParaReset;
 
     // Puzzle das pedras
-    bool comTouro = false;
     bool empurrandoPedra = false;
     Transform Pedra;
     Vector3 PedraPosInicial;
@@ -58,12 +60,15 @@ public class Personagem : MonoBehaviour
 
     void ControleMovimento()
     {
-        if (!esperandoSegundos)
+        if (movimentoPermitido)
         {
-            if (!empurrandoPedra)
+            if (!esperandoSegundos)
             {
-                Pular();
-                Mover();
+                if (!empurrandoPedra)
+                {
+                    Pular();
+                    Mover();
+                }
             }
         }
     }
@@ -71,7 +76,9 @@ public class Personagem : MonoBehaviour
     void Mover()
     {
         float velocidadeZ;
-        if (Input.GetKey(KeyCode.LeftShift))
+        float velocidadeX;
+
+        if (Input.GetKey(KeyCode.LeftShift) || Input.GetAxis("Run") > 0)
         {
             velocidadeZ = Input.GetAxis("Vertical") * velocidadeAndar * 1.7f;
         }
@@ -79,8 +86,20 @@ public class Personagem : MonoBehaviour
         {
             velocidadeZ = Input.GetAxis("Vertical") * velocidadeAndar;
         }
-        
-        float velocidadeX = 0;
+
+        /*
+        if (Input.GetKey(KeyCode.LeftShift) || Input.GetAxis("Run") > 0)
+        {
+            velocidadeX = Input.GetAxis("Horizontal") * velocidadeAndar * 1.7f;
+        }
+        else
+        {
+            velocidadeX = Input.GetAxis("Horizontal") * velocidadeAndar;
+        }*/
+
+
+
+        velocidadeX = 0;
         Vector3 velocidadeCorrigida = velocidadeX * transform.right + velocidadeZ * transform.forward;
 
         Corpo.velocity = new Vector3(velocidadeCorrigida.x, Corpo.velocity.y, velocidadeCorrigida.z);
@@ -90,13 +109,13 @@ public class Personagem : MonoBehaviour
 
     void Girar()
     {
-        float GiroY = Input.GetAxis("Horizontal") * sensibilidadeGiro * Time.deltaTime;
+        float GiroY = Input.GetAxis("Mouse X") * sensibilidadeGiro * Time.deltaTime;
         transform.Rotate(Vector3.up * GiroY);
     }
 
     void Pular()
     {
-        if (Input.GetKeyDown(KeyCode.Space) && estaNoChao)
+        if ((Input.GetKeyDown(KeyCode.Space) || Input.GetKeyDown(KeyCode.JoystickButton0)) && estaNoChao)
         {
             Corpo.AddForce(Vector3.up * forcaPulo);
             estaNoChao = false;
@@ -134,12 +153,17 @@ public class Personagem : MonoBehaviour
         transform.rotation = Quaternion.LookRotation(newDirection);
     }
 
+    public bool SeTouroEstaDomado()
+    {
+        return touroDomado;
+    }
+
     void EmpurrarPedra()
     {
         if (!empurrandoPedra)
         {
             Pedra = ChecarSePertoDePedra();
-            if (Pedra != null && Input.GetKeyDown(KeyCode.E) && ChecarSePodeMoverPedra(Pedra) && EncontrarFrentePedra(Pedra) != new Vector3(0, 0, 0))
+            if (Pedra != null && (Input.GetKeyDown(KeyCode.E) || Input.GetKeyDown(KeyCode.JoystickButton3)) && ChecarSePodeMoverPedra(Pedra) && EncontrarFrentePedra(Pedra) != new Vector3(0, 0, 0))
             {
                 frentePedra = EncontrarFrentePedra(Pedra);
                 Pedra.GetComponent<Pedra>().MudarEstadoMovimento();
@@ -168,7 +192,7 @@ public class Personagem : MonoBehaviour
     }
     void AnimacaoEmpurrarPedra()
     {
-        if (comTouro)
+        if (touroDomado)
         {
             // Sequência de animações com touro
         }
@@ -214,7 +238,7 @@ public class Personagem : MonoBehaviour
         // Verificação que pode mover a pedra se for pesada
         if (Pedra.gameObject.tag == "PedraPesada")
         {
-            if (!comTouro)
+            if (!touroDomado)
             {
                 return false;
             }
@@ -283,9 +307,9 @@ public class Personagem : MonoBehaviour
 
     void ResetarPuzzlePedras()
     {
-        if(PegarEstadoFase() == (int)EstadoFase.PuzzlePedrasSemDom || PegarEstadoFase() == (int)EstadoFase.PuzzlePedrasComDom)
+        if(!esperandoSegundos && !empurrandoPedra && movimentoPermitido && (PegarEstadoFase() == (int)EstadoFase.PuzzlePedrasSemDom || PegarEstadoFase() == (int)EstadoFase.PuzzlePedrasComDom))
         {
-            if (Input.GetKeyDown(KeyCode.P))
+            if (Input.GetKeyDown(KeyCode.P) || Input.GetKeyDown(KeyCode.JoystickButton5))
             {
                 if(infoCheckpoint[0] != new Vector3(0f, 0f, 0f))
                 {
@@ -326,4 +350,8 @@ public class Personagem : MonoBehaviour
         }
     }
 
+    public void PrenderPersonagem()
+    {
+        movimentoPermitido = false;
+    }
 }

@@ -7,7 +7,6 @@ public class GerenciadorFase : MonoBehaviour
     enum EstadoFase { SemPuzzleSemDom, PuzzlePedrasSemDom, PuzzlePedrasComDom, PuzzleRuinas, SemPuzzleComDom};
 
     EstadoFase estadoDaFase;
-    bool touroDomado = false;
     GameObject Player;
 
     // 1o elemento: Canto esquerda superior
@@ -37,7 +36,7 @@ public class GerenciadorFase : MonoBehaviour
     {
         if (dentroAreaPuzzle(areaPuzzlePedras))
         {
-            if (touroDomado)
+            if (Player.GetComponent<Personagem>().SeTouroEstaDomado())
             {
                 estadoDaFase = EstadoFase.PuzzlePedrasComDom;
             }
@@ -50,7 +49,7 @@ public class GerenciadorFase : MonoBehaviour
         {
             estadoDaFase = EstadoFase.PuzzleRuinas;
         }
-        else if (touroDomado)
+        else if (Player.GetComponent<Personagem>().SeTouroEstaDomado())
         {
             estadoDaFase = EstadoFase.SemPuzzleComDom;
         }
