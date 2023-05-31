@@ -7,7 +7,8 @@ public class Canalizador : MonoBehaviour
     GameObject Player;
     GameObject[] Raizes1;
     GameObject[] Raizes2;
-    int raizesAtivados = 2;
+    [SerializeField]
+    int raizesAtivados = 1;
     bool trocandoRaizes = false;
 
     void Start()
