@@ -6,19 +6,17 @@ public class Canalizador : MonoBehaviour
 {
     GameObject Player;
     bool trocandoRaizes = false;
-    int raizesAtivados;
 
     void Start()
     {
         Player = GameObject.FindGameObjectWithTag("Player");
-        raizesAtivados = GameObject.FindGameObjectWithTag("GameController").GetComponent<GerenciadorFase>().raizesIniciais;
     }
 
     void Update()
     {
         if (trocandoRaizes)
         {
-            //GameObject.FindGameObjectWithTag("GameController").GetComponent<GerenciadorFase>().AtivacaoRaizes(raizesAtivados);
+            //GameObject.FindGameObjectWithTag("GameController").GetComponent<GerenciadorFase>().AtivacaoRaizes(GameObject.FindGameObjectWithTag("GameController").GetComponent<GerenciadorFase>().GetRaizesAtivados());
         }
         else
         {
@@ -27,9 +25,9 @@ public class Canalizador : MonoBehaviour
                 if (Input.GetKeyDown(KeyCode.E) || Input.GetKeyDown(KeyCode.JoystickButton3))
                 {
                     AnimacaoAtivacaoPersonagem();
-                    TrocarRaizesAtivos();
+                    GameObject.FindGameObjectWithTag("GameController").GetComponent<GerenciadorFase>().TrocarRaizesAtivos();
                     // Deletar dps
-                    GameObject.FindGameObjectWithTag("GameController").GetComponent<GerenciadorFase>().AtivacaoRaizes(raizesAtivados);
+                    GameObject.FindGameObjectWithTag("GameController").GetComponent<GerenciadorFase>().AtivacaoRaizes(GameObject.FindGameObjectWithTag("GameController").GetComponent<GerenciadorFase>().GetRaizesAtivados());
                     //trocandoRaizes = true;
                 }
             }
@@ -39,19 +37,6 @@ public class Canalizador : MonoBehaviour
     void AnimacaoAtivacaoPersonagem()
     {
         //Player.GetComponent<Animator>().SetTrigger();
-    }
-
-    public void TrocarRaizesAtivos()
-    {
-        if (raizesAtivados == 1)
-        {
-            raizesAtivados = 2;
-        }
-        else
-        {
-            raizesAtivados = 1;
-        }
-
     }
 
     public void AcabouTroca()

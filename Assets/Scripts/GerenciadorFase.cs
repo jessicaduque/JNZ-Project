@@ -7,6 +7,7 @@ public class GerenciadorFase : MonoBehaviour
     enum EstadoFase { SemPuzzleSemDom, PuzzlePedrasSemDom, PuzzlePedrasComDom, PuzzleRuinas, SemPuzzleComDom};
     [SerializeField]
     public int raizesIniciais = 1;
+    int raizesAtivados;
     GameObject[] Raizes1;
     GameObject[] Raizes2;
 
@@ -27,6 +28,8 @@ public class GerenciadorFase : MonoBehaviour
 
         Raizes1 = GameObject.FindGameObjectsWithTag("Raiz1");
         Raizes2 = GameObject.FindGameObjectsWithTag("Raiz2");
+
+        raizesAtivados = raizesIniciais;
         AtivacaoRaizes(raizesIniciais);
     }
 
@@ -90,7 +93,6 @@ public class GerenciadorFase : MonoBehaviour
 
         if (raizes == 2)
         {
-            Debug.Log("bro2");
             for (int i = 0; i < Raizes1.Length; i++)
             {
                 Raizes1[i].SetActive(false);
@@ -103,7 +105,6 @@ public class GerenciadorFase : MonoBehaviour
         }
         else
         {
-            Debug.Log("bro1");
             for (int i = 0; i < Raizes1.Length; i++)
             {
                 Raizes1[i].SetActive(true);
@@ -114,6 +115,24 @@ public class GerenciadorFase : MonoBehaviour
                 Raizes2[i].SetActive(false);
             }
         }
+    }
+
+    public void TrocarRaizesAtivos()
+    {
+        if (raizesAtivados == 1)
+        {
+            raizesAtivados = 2;
+        }
+        else
+        {
+            raizesAtivados = 1;
+        }
+
+    }
+
+    public int GetRaizesAtivados()
+    {
+        return raizesAtivados;
     }
 
 }

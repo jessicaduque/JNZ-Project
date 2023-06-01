@@ -28,7 +28,7 @@ public class Personagem : MonoBehaviour
     // Sistema checkpoints
     Vector3[] infoCheckpoint = new Vector3[2];
     GameObject[] PedrasParaReset;
-    int raizesAtivados;
+    int raizesAtivadosCheckpoint;
 
     // Puzzle das pedras
     bool empurrandoPedra = false;
@@ -144,8 +144,7 @@ public class Personagem : MonoBehaviour
                 infoCheckpoint[0] = new Vector3(colidiu.gameObject.transform.position.x, transform.position.y, colidiu.gameObject.transform.position.z);
                 infoCheckpoint[1] = colidiu.gameObject.transform.eulerAngles;
                 PedrasParaReset = colidiu.gameObject.GetComponent<Checkpoint>().pedrasParaResetar;
-                raizesAtivados = colidiu.gameObject.GetComponent<Checkpoint>().raizesAtivados;
-                Debug.Log(raizesAtivados);
+                raizesAtivadosCheckpoint = GameObject.FindGameObjectWithTag("GameController").GetComponent<GerenciadorFase>().GetRaizesAtivados();
                 Destroy(colidiu.gameObject);
             }
         }
@@ -163,6 +162,7 @@ public class Personagem : MonoBehaviour
 
     void EmpurrarPedra()
     {
+
         if (!empurrandoPedra)
         {
             Pedra = ChecarSePertoDePedra();
@@ -172,7 +172,7 @@ public class Personagem : MonoBehaviour
                 Pedra.GetComponent<Pedra>().MudarEstadoMovimento();
                 PedraPosInicial = Pedra.transform.position;
                 empurrandoPedra = true;
-                
+
             }
         }
         else
@@ -192,6 +192,56 @@ public class Personagem : MonoBehaviour
                 empurrandoPedra = false;
             }
         }
+
+        /* SUGESTÃO DO FABIANO
+        if (!empurrandoPedra)
+        {
+            Pedra = ChecarSePertoDePedra();
+            if (Pedra != null && (Input.GetKeyDown(KeyCode.E) || Input.GetKeyDown(KeyCode.JoystickButton3)) && ChecarSePodeMoverPedra(Pedra) && EncontrarFrentePedra(Pedra) != new Vector3(0, 0, 0))
+            {
+                frentePedra = EncontrarFrentePedra(Pedra);
+                //Pedra.GetComponent<Pedra>().MudarEstadoMovimento();
+                PedraPosInicial = Pedra.transform.position;
+                empurrandoPedra = true;
+                
+            }
+        }
+        else
+        {
+            float velocidadeGiroParaPedra = 1f;
+            float rapidezEmpurrar = 3f;
+
+            RotacionarEmDirecaoAAlgo(frentePedra, velocidadeGiroParaPedra);
+
+            AnimacaoEmpurrarPedra();
+
+            PrenderPersonagem();
+            Pedra.GetComponent<Rigidbody>().mass = 0.4f;
+            // Para prender o movimento da pedra nos eixos não desejado
+            
+            if (frentePedra.x != 0)
+            {
+                Pedra.GetComponent<Rigidbody>().constraints = RigidbodyConstraints.FreezePositionZ | RigidbodyConstraints.FreezePositionY | RigidbodyConstraints.FreezeRotation; 
+            }
+            else
+            {
+                transform.position += new Vector3(0, 0, 0.005f) * frentePedra.z;
+                Pedra.GetComponent<Rigidbody>().constraints = RigidbodyConstraints.FreezePositionX | RigidbodyConstraints.FreezePositionY | RigidbodyConstraints.FreezeRotation;
+            }
+
+            Debug.Log(PedraPosInicial);
+            Debug.Log(frentePedra);
+            Debug.Log(PedraPosInicial + (8 * frentePedra));
+            Debug.Log(PedraPosInicial - (8 * frentePedra));
+
+            if (Pedra.transform.position == PedraPosInicial + (8 * frentePedra) || Pedra.transform.position == PedraPosInicial - (8 * frentePedra))
+            {
+                Debug.Log("acabou");
+                movimentoPermitido = true;
+                Pedra.GetComponent<Rigidbody>().mass = 10000000f;
+                empurrandoPedra = false;
+            }
+        }*/
     }
     void AnimacaoEmpurrarPedra()
     {
@@ -321,7 +371,7 @@ public class Personagem : MonoBehaviour
                     segundosParaEsperar = 1.2f;
                     Corpo.velocity = new Vector3(0f, 0f, 0f);
 
-                    GameObject.FindGameObjectWithTag("GameController").GetComponent<GerenciadorFase>().AtivacaoRaizes(raizesAtivados);
+                    GameObject.FindGameObjectWithTag("GameController").GetComponent<GerenciadorFase>().AtivacaoRaizes(raizesAtivadosCheckpoint);
 
                     for (int i=0; i < PedrasParaReset.Length; i++)
                     {
