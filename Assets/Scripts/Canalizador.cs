@@ -5,50 +5,20 @@ using UnityEngine;
 public class Canalizador : MonoBehaviour
 {
     GameObject Player;
-    GameObject[] Raizes1;
-    GameObject[] Raizes2;
-    [SerializeField]
-    int raizesAtivados = 1;
     bool trocandoRaizes = false;
+    int raizesAtivados;
 
     void Start()
     {
         Player = GameObject.FindGameObjectWithTag("Player");
-
-        Raizes1 = GameObject.FindGameObjectsWithTag("Raiz1");
-        Raizes2 = GameObject.FindGameObjectsWithTag("Raiz2");
-
-        if (raizesAtivados == 2)
-        {
-            for (int i = 0; i < Raizes1.Length; i++)
-            {
-                Raizes1[i].SetActive(false);
-            }
-
-            for (int i = 0; i < Raizes2.Length; i++)
-            {
-                Raizes2[i].SetActive(true);
-            }
-        }
-        else
-        {
-            for (int i = 0; i < Raizes1.Length; i++)
-            {
-                Raizes1[i].SetActive(true);
-            }
-
-            for (int i = 0; i < Raizes2.Length; i++)
-            {
-                Raizes2[i].SetActive(false);
-            }
-        }
+        raizesAtivados = GameObject.FindGameObjectWithTag("GameController").GetComponent<GerenciadorFase>().raizesIniciais;
     }
 
     void Update()
     {
         if (trocandoRaizes)
         {
-            //TrocarRaizes(raizesAtivados);
+            //GameObject.FindGameObjectWithTag("GameController").GetComponent<GerenciadorFase>().AtivacaoRaizes(raizesAtivados);
         }
         else
         {
@@ -57,16 +27,10 @@ public class Canalizador : MonoBehaviour
                 if (Input.GetKeyDown(KeyCode.E) || Input.GetKeyDown(KeyCode.JoystickButton3))
                 {
                     AnimacaoAtivacaoPersonagem();
-                    if(raizesAtivados == 1)
-                    {
-                        raizesAtivados = 2;
-                    }
-                    else
-                    {
-                        raizesAtivados = 1;
-                    }
+                    TrocarRaizesAtivos();
+                    // Deletar dps
+                    GameObject.FindGameObjectWithTag("GameController").GetComponent<GerenciadorFase>().AtivacaoRaizes(raizesAtivados);
                     //trocandoRaizes = true;
-                    TrocarRaizes(raizesAtivados);
                 }
             }
         }
@@ -77,33 +41,17 @@ public class Canalizador : MonoBehaviour
         //Player.GetComponent<Animator>().SetTrigger();
     }
 
-    void TrocarRaizes(int raizes)
+    public void TrocarRaizesAtivos()
     {
-        if(raizes == 2)
+        if (raizesAtivados == 1)
         {
-            for (int i = 0; i < Raizes1.Length; i++)
-            {
-                Raizes1[i].SetActive(false);
-            }
-
-            for (int i = 0; i < Raizes2.Length; i++)
-            {
-                Raizes2[i].SetActive(true);
-            }
+            raizesAtivados = 2;
         }
         else
         {
-            for (int i = 0; i < Raizes1.Length; i++)
-            {
-                Raizes1[i].SetActive(true);
-            }
-
-            for (int i = 0; i < Raizes2.Length; i++)
-            {
-                Raizes2[i].SetActive(false);
-            }
+            raizesAtivados = 1;
         }
-        
+
     }
 
     public void AcabouTroca()

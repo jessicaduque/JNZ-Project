@@ -6,8 +6,5 @@ public class Checkpoint : MonoBehaviour
 {
     public bool UltimoCheck;
     public GameObject[] pedrasParaResetar;
-
-    private void Start()
-    {
-    }
+    public int raizesAtivados;
 }

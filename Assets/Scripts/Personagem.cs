@@ -19,7 +19,6 @@ public class Personagem : MonoBehaviour
     bool movimentoPermitido = true;
     bool touroDomado = false;
 
-
     float tempo = 0.0f;
     float segundosParaEsperar;
 
@@ -29,6 +28,7 @@ public class Personagem : MonoBehaviour
     // Sistema checkpoints
     Vector3[] infoCheckpoint = new Vector3[2];
     GameObject[] PedrasParaReset;
+    int raizesAtivados;
 
     // Puzzle das pedras
     bool empurrandoPedra = false;
@@ -66,7 +66,8 @@ public class Personagem : MonoBehaviour
             {
                 if (!empurrandoPedra)
                 {
-                    Pular();
+                    // Sem pulo para o protótipo
+                    //Pular();
                     Mover();
                 }
             }
@@ -87,7 +88,7 @@ public class Personagem : MonoBehaviour
             velocidadeZ = Input.GetAxis("Vertical") * velocidadeAndar;
         }
 
-        /*
+        
         if (Input.GetKey(KeyCode.LeftShift) || Input.GetAxis("Run") > 0)
         {
             velocidadeX = Input.GetAxis("Horizontal") * velocidadeAndar * 1.7f;
@@ -95,11 +96,11 @@ public class Personagem : MonoBehaviour
         else
         {
             velocidadeX = Input.GetAxis("Horizontal") * velocidadeAndar;
-        }*/
+        }
 
 
 
-        velocidadeX = 0;
+        //velocidadeX = 0;
         Vector3 velocidadeCorrigida = velocidadeX * transform.right + velocidadeZ * transform.forward;
 
         Corpo.velocity = new Vector3(velocidadeCorrigida.x, Corpo.velocity.y, velocidadeCorrigida.z);
@@ -143,6 +144,8 @@ public class Personagem : MonoBehaviour
                 infoCheckpoint[0] = new Vector3(colidiu.gameObject.transform.position.x, transform.position.y, colidiu.gameObject.transform.position.z);
                 infoCheckpoint[1] = colidiu.gameObject.transform.eulerAngles;
                 PedrasParaReset = colidiu.gameObject.GetComponent<Checkpoint>().pedrasParaResetar;
+                raizesAtivados = colidiu.gameObject.GetComponent<Checkpoint>().raizesAtivados;
+                Debug.Log(raizesAtivados);
                 Destroy(colidiu.gameObject);
             }
         }
@@ -255,7 +258,7 @@ public class Personagem : MonoBehaviour
         if (Physics.Raycast(Pedra.position, -direction, out meuRay, 8f))
         {
             string colisor = meuRay.collider.gameObject.tag;
-            if (colisor != "Parede" && colisor != "PedraLeve" && colisor != "PedraPesada")
+            if (colisor != "Parede" && colisor != "PedraLeve" && colisor != "PedraPesada" && colisor != "Raiz1" && colisor != "Raiz2")
             {
                 return true;
             }
@@ -318,7 +321,9 @@ public class Personagem : MonoBehaviour
                     segundosParaEsperar = 1.2f;
                     Corpo.velocity = new Vector3(0f, 0f, 0f);
 
-                    for(int i=0; i < PedrasParaReset.Length; i++)
+                    GameObject.FindGameObjectWithTag("GameController").GetComponent<GerenciadorFase>().AtivacaoRaizes(raizesAtivados);
+
+                    for (int i=0; i < PedrasParaReset.Length; i++)
                     {
                         PedrasParaReset[i].transform.position = PedrasParaReset[i].GetComponent<Pedra>().PosicaoInicial;
                     }
