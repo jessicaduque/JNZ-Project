@@ -24,6 +24,8 @@ public class Personagem : MonoBehaviour
 
     // Estado da fase
     enum EstadoFase { SemPuzzleSemDom = 0, PuzzlePedrasSemDom = 1, PuzzlePedrasComDom = 2, PuzzleRuinas = 3, SemPuzzleComDom = 4};
+    private bool pisandoEmRuinas = false;
+
 
     // Sistema checkpoints
     Vector3[] infoCheckpoint = new Vector3[2];
@@ -67,7 +69,7 @@ public class Personagem : MonoBehaviour
                 if (!empurrandoPedra)
                 {
                     // Sem pulo para o protótipo
-                    //Pular();
+                    Pular();
                     Mover();
                 }
             }
@@ -147,6 +149,20 @@ public class Personagem : MonoBehaviour
                 raizesAtivadosCheckpoint = GameObject.FindGameObjectWithTag("GameController").GetComponent<GerenciadorFase>().GetRaizesAtivados();
                 Destroy(colidiu.gameObject);
             }
+        }
+
+        if(colidiu.gameObject.tag == "PuzzleRuinas")
+        {
+            pisandoEmRuinas = true;
+            estaNoChao = true;
+        }
+    }
+
+    private void OnTriggerExit(Collider colidiu)
+    {
+        if (colidiu.gameObject.tag == "PuzzleRuinas")
+        {
+            pisandoEmRuinas = false;
         }
     }
     void RotacionarEmDirecaoAAlgo(Vector3 ondeOlhar, float velocidadeGiro)
@@ -405,6 +421,10 @@ public class Personagem : MonoBehaviour
         }
     }
 
+    public bool PisandoEmRuinas()
+    {
+        return pisandoEmRuinas;
+    }
     public void PrenderPersonagem()
     {
         movimentoPermitido = false;

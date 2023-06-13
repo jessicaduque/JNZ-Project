@@ -18,7 +18,6 @@ public class GerenciadorFase : MonoBehaviour
     // 1o elemento: Canto esquerda superior
     // 2o elemento: Canto direita inferior
     public Vector3[] areaPuzzlePedras;
-    public Vector3[] areaPuzzleRuinas;
 
     void Start()
     {
@@ -57,7 +56,7 @@ public class GerenciadorFase : MonoBehaviour
                 estadoDaFase = EstadoFase.PuzzlePedrasSemDom;
             }
         }
-        else if (dentroAreaPuzzle(areaPuzzleRuinas))
+        else if (Player.GetComponent<Personagem>().PisandoEmRuinas() && !Player.GetComponent<Personagem>().SeTouroEstaDomado())
         {
             estadoDaFase = EstadoFase.PuzzleRuinas;
         }

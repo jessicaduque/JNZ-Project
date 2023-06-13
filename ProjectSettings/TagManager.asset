@@ -10,6 +10,10 @@ TagManager:
   - PedraPesada
   - Pilar
   - Checkpoint
+  - Raiz1
+  - Raiz2
+  - Canalizador
+  - PuzzleRuinas
   layers:
   - Default
   - TransparentFX
