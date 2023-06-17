@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class GerenciadorFase : MonoBehaviour
 {
@@ -13,7 +14,13 @@ public class GerenciadorFase : MonoBehaviour
 
     EstadoFase estadoDaFase;
     GameObject Player;
-    
+
+    // Sobre interações do player
+    public GameObject InteragivelMaisPerto = null;
+    [SerializeField]
+    private Image BotaoInteracao;
+    private bool playerInteragindo = false;
+
 
     // 1o elemento: Canto esquerda superior
     // 2o elemento: Canto direita inferior
@@ -133,5 +140,38 @@ public class GerenciadorFase : MonoBehaviour
     {
         return raizesAtivados;
     }
+
+    void PertoDeInteragivel()
+    {
+        // starting empty to make a point
+        List<GameObject> InteragiveisList = new List<GameObject>();
+        GameObject[] Interagiveis;
+
+        InteragiveisList.AddRange(GameObject.FindGameObjectsWithTag("PedraLeve"));
+        InteragiveisList.AddRange(GameObject.FindGameObjectsWithTag("PedraPesada"));
+        InteragiveisList.AddRange(GameObject.FindGameObjectsWithTag("Interagiveis"));
+
+        Interagiveis = InteragiveisList.ToArray();
+
+        InteragivelMaisPerto = null;
+
+        foreach (GameObject interagivel in Interagiveis)
+        {
+            if (Vector3.Distance(Player.transform.position, interagivel.transform.position) <= 2)
+            {
+                InteragivelMaisPerto = interagivel;
+            }
+        }
+
+        if (InteragivelMaisPerto != null && !playerInteragindo)
+        {
+            BotaoInteracao.gameObject.SetActive(true);
+        }
+        else
+        {
+            BotaoInteracao.gameObject.SetActive(false);
+        }
+    }
+
 
 }

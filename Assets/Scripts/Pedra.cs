@@ -6,7 +6,7 @@ public class Pedra : MonoBehaviour
 {
     GameObject Player;
     Vector3 frente;
-    float rapidez = 3f;
+    float rapidez = 10f;
     public Vector3 PosicaoInicial;
     bool podeMover = false;
 
@@ -21,7 +21,15 @@ public class Pedra : MonoBehaviour
         if (podeMover)
         {
             frente = Player.GetComponent<Personagem>().frentePedra;
-            transform.position += rapidez * frente * Time.deltaTime;
+        }
+    }
+
+    private void FixedUpdate()
+    {
+        if (podeMover)
+        {
+            Debug.Log(frente);
+            Player.GetComponent<Rigidbody>().velocity = rapidez * frente;
         }
     }
 

@@ -10,14 +10,19 @@ public class Personagem : MonoBehaviour
     float sensibilidadeGiro = 500f;
     [SerializeField]
     float velocidadeAndar = 4;
+    private float velocidadeFinal = 0;
     [SerializeField]
     bool esperandoSegundos = false;
     [SerializeField]
     float forcaPulo = 1000;
     public GameObject pezinho;
+    private bool recebeuInputMover;
     public bool estaNoChao = true;
     bool movimentoPermitido = true;
     bool touroDomado = false;
+
+    [SerializeField]
+    private Vector3 posInicial;
 
     float tempo = 0.0f;
     float segundosParaEsperar;
@@ -42,6 +47,7 @@ public class Personagem : MonoBehaviour
     void Start()
     {
         Corpo = GetComponent<Rigidbody>();
+        transform.position = posInicial;
     }
 
     void Update()
@@ -51,6 +57,10 @@ public class Personagem : MonoBehaviour
         {
             EsperarSegundos(segundosParaEsperar);
         }
+        else
+        {
+            tempo = 0.0f;
+        }
 
         // O player só pode se mover se não estiver no meio de empurrar uma pedra
         ControleMovimento();
@@ -58,6 +68,14 @@ public class Personagem : MonoBehaviour
         // Puzzle das pedras
         ResetarPuzzlePedras();
         EmpurrarPedra();
+    }
+
+    private void FixedUpdate()
+    {
+        if (recebeuInputMover && movimentoPermitido && !esperandoSegundos && !empurrandoPedra)
+        {
+            Mover();
+        }
     }
 
     void ControleMovimento()
@@ -70,44 +88,75 @@ public class Personagem : MonoBehaviour
                 {
                     // Sem pulo para o protótipo
                     Pular();
-                    Mover();
+
+                    ReceberInputs();
+                    Girar();
+                    Corpo.constraints = RigidbodyConstraints.FreezeRotation;
+                    //AnimacaoAndar();
                 }
+
+
             }
         }
     }
+    void ReceberInputs()
+    {
+        if (Input.GetKey(KeyCode.A) || Input.GetKey(KeyCode.D) || Input.GetKey(KeyCode.W) || Input.GetKey(KeyCode.S) || Input.GetAxis("Horizontal") != 0 || Input.GetAxis("Vertical") != 0)
+        {
+            recebeuInputMover = true;
+        }
+        else
+        {
+            recebeuInputMover = false;
+        }
+
+        if (Input.GetKey(KeyCode.LeftShift) || Input.GetAxis("Run") > 0)
+        {
+            velocidadeFinal = velocidadeAndar * 1.7f;
+        }
+        else
+        {
+            velocidadeFinal = velocidadeAndar;
+        }
+
+    }
+
+    /*void AnimacaoAndar()
+    {
+        if (movimentoPermitido)
+        {
+            if ((Input.GetKey(KeyCode.A) || Input.GetKey(KeyCode.D) || Input.GetAxis("Horizontal") != 0) && (!Input.GetKey(KeyCode.LeftShift) && Input.GetAxis("Run") == 0))
+            {
+                Anim.SetBool("Correndo", false);
+                Anim.SetBool("Andando", true);
+
+            }
+            else if ((Input.GetKey(KeyCode.A) || Input.GetKey(KeyCode.D) || Input.GetAxis("Horizontal") != 0) && (Input.GetKey(KeyCode.LeftShift) || Input.GetAxis("Run") > 0))
+            {
+                Anim.SetBool("Andando", false);
+                Anim.SetBool("Correndo", true);
+            }
+            else
+            {
+                Anim.SetBool("Correndo", false);
+                Anim.SetBool("Andando", false);
+            }
+
+        }
+    }*/
 
     void Mover()
     {
         float velocidadeZ;
         float velocidadeX;
 
-        if (Input.GetKey(KeyCode.LeftShift) || Input.GetAxis("Run") > 0)
-        {
-            velocidadeZ = Input.GetAxis("Vertical") * velocidadeAndar * 1.7f;
-        }
-        else
-        {
-            velocidadeZ = Input.GetAxis("Vertical") * velocidadeAndar;
-        }
-
-        
-        if (Input.GetKey(KeyCode.LeftShift) || Input.GetAxis("Run") > 0)
-        {
-            velocidadeX = Input.GetAxis("Horizontal") * velocidadeAndar * 1.7f;
-        }
-        else
-        {
-            velocidadeX = Input.GetAxis("Horizontal") * velocidadeAndar;
-        }
-
-
+        velocidadeZ = Input.GetAxis("Vertical") * velocidadeFinal;
+        velocidadeX = Input.GetAxis("Horizontal") * velocidadeFinal;
 
         //velocidadeX = 0;
         Vector3 velocidadeCorrigida = velocidadeX * transform.right + velocidadeZ * transform.forward;
 
         Corpo.velocity = new Vector3(velocidadeCorrigida.x, Corpo.velocity.y, velocidadeCorrigida.z);
-
-        Girar();
     }
 
     void Girar()
@@ -165,6 +214,7 @@ public class Personagem : MonoBehaviour
             pisandoEmRuinas = false;
         }
     }
+
     void RotacionarEmDirecaoAAlgo(Vector3 ondeOlhar, float velocidadeGiro)
     {
         Vector3 newDirection = Vector3.RotateTowards(transform.forward, ondeOlhar, velocidadeGiro * Time.deltaTime, 0.0f);
@@ -178,7 +228,7 @@ public class Personagem : MonoBehaviour
 
     void EmpurrarPedra()
     {
-
+        /*
         if (!empurrandoPedra)
         {
             Pedra = ChecarSePertoDePedra();
@@ -208,8 +258,11 @@ public class Personagem : MonoBehaviour
                 empurrandoPedra = false;
             }
         }
+        */
 
-        /* SUGESTÃO DO FABIANO
+
+        // SUGESTÃO DO FABIANO
+        
         if (!empurrandoPedra)
         {
             Pedra = ChecarSePertoDePedra();
@@ -225,39 +278,40 @@ public class Personagem : MonoBehaviour
         else
         {
             float velocidadeGiroParaPedra = 1f;
-            float rapidezEmpurrar = 3f;
+            //float rapidezEmpurrar = 5f;
 
             RotacionarEmDirecaoAAlgo(frentePedra, velocidadeGiroParaPedra);
-
             AnimacaoEmpurrarPedra();
-
             PrenderPersonagem();
-            Pedra.GetComponent<Rigidbody>().mass = 0.4f;
+            Pedra.GetComponent<Rigidbody>().mass = 1;
+
             // Para prender o movimento da pedra nos eixos não desejado
-            
-            if (frentePedra.x != 0)
+
+            if (frentePedra.x == 0)
             {
-                Pedra.GetComponent<Rigidbody>().constraints = RigidbodyConstraints.FreezePositionZ | RigidbodyConstraints.FreezePositionY | RigidbodyConstraints.FreezeRotation; 
+                Debug.Log("entrou");
+                Pedra.GetComponent<Rigidbody>().constraints = RigidbodyConstraints.FreezePositionX | RigidbodyConstraints.FreezePositionY | RigidbodyConstraints.FreezeRotation;
+                Corpo.constraints = RigidbodyConstraints.FreezePositionX | RigidbodyConstraints.FreezePositionY | RigidbodyConstraints.FreezeRotation; 
             }
             else
             {
-                transform.position += new Vector3(0, 0, 0.005f) * frentePedra.z;
-                Pedra.GetComponent<Rigidbody>().constraints = RigidbodyConstraints.FreezePositionX | RigidbodyConstraints.FreezePositionY | RigidbodyConstraints.FreezeRotation;
+                Pedra.GetComponent<Rigidbody>().constraints = RigidbodyConstraints.FreezePositionZ | RigidbodyConstraints.FreezePositionY | RigidbodyConstraints.FreezeRotation;
+                Corpo.constraints = RigidbodyConstraints.FreezePositionZ | RigidbodyConstraints.FreezePositionY | RigidbodyConstraints.FreezeRotation;
             }
 
-            Debug.Log(PedraPosInicial);
-            Debug.Log(frentePedra);
-            Debug.Log(PedraPosInicial + (8 * frentePedra));
-            Debug.Log(PedraPosInicial - (8 * frentePedra));
+            Corpo.velocity = velocidadeAndar * 0.7f * frentePedra;
 
-            if (Pedra.transform.position == PedraPosInicial + (8 * frentePedra) || Pedra.transform.position == PedraPosInicial - (8 * frentePedra))
+            Debug.Log(Pedra.transform.position);
+
+            if (Pedra.transform.position == PedraPosInicial + new Vector3(0, 0, (8 * PedraPosInicial.z)) || Pedra.transform.position == PedraPosInicial - new Vector3(0, 0, (8 * PedraPosInicial.z)) || Pedra.transform.position == PedraPosInicial + new Vector3((8 * PedraPosInicial.x), 0, 0) || Pedra.transform.position == PedraPosInicial - new Vector3((8 * PedraPosInicial.x), 0, 0))
             {
                 Debug.Log("acabou");
+                Corpo.velocity = new Vector3(0, 0, 0);
+                Pedra.GetComponent<Rigidbody>().mass = 1000000f;
                 movimentoPermitido = true;
-                Pedra.GetComponent<Rigidbody>().mass = 10000000f;
                 empurrandoPedra = false;
             }
-        }*/
+        }
     }
     void AnimacaoEmpurrarPedra()
     {
@@ -405,12 +459,13 @@ public class Personagem : MonoBehaviour
         return GameObject.FindGameObjectWithTag("GameController").GetComponent<GerenciadorFase>().GetEstadoFase();
     }
 
-    bool EsperarSegundos(float segundos)
+    public bool EsperarSegundos(float segundos)
     {
         tempo += Time.deltaTime;
+        Debug.Log(tempo);
+
         if(tempo > segundos)
         {
-            tempo = 0.0f;
             esperandoSegundos = false;
             return true;
         }
@@ -428,5 +483,10 @@ public class Personagem : MonoBehaviour
     public void PrenderPersonagem()
     {
         movimentoPermitido = false;
+        Corpo.velocity = new Vector3(0, 0, 0);
+    }
+    public void DesprenderPersonagem()
+    {
+        movimentoPermitido = true;
     }
 }
