@@ -86,9 +86,6 @@ public class Personagem : MonoBehaviour
             {
                 if (!empurrandoPedra)
                 {
-                    // Sem pulo para o protótipo
-                    Pular();
-
                     ReceberInputs();
                     Girar();
                     Corpo.constraints = RigidbodyConstraints.FreezeRotation;
@@ -101,7 +98,7 @@ public class Personagem : MonoBehaviour
     }
     void ReceberInputs()
     {
-        if (Input.GetKey(KeyCode.A) || Input.GetKey(KeyCode.D) || Input.GetKey(KeyCode.W) || Input.GetKey(KeyCode.S) || Input.GetAxis("Horizontal") != 0 || Input.GetAxis("Vertical") != 0)
+        if (Input.GetAxis("Horizontal") != 0 || Input.GetAxis("Vertical") != 0)
         {
             recebeuInputMover = true;
         }
@@ -165,22 +162,8 @@ public class Personagem : MonoBehaviour
         transform.Rotate(Vector3.up * GiroY);
     }
 
-    void Pular()
-    {
-        if ((Input.GetKeyDown(KeyCode.Space) || Input.GetKeyDown(KeyCode.JoystickButton0)) && estaNoChao)
-        {
-            Corpo.AddForce(Vector3.up * forcaPulo);
-            estaNoChao = false;
-        }
-    }
-
     private void OnTriggerEnter(Collider colidiu)
     {
-        if (colidiu.gameObject.tag == "Chao")
-        {
-            estaNoChao = true;
-        }
-
         if (colidiu.gameObject.tag == "Checkpoint")
         {
             if (colidiu.gameObject.GetComponent<Checkpoint>().UltimoCheck)
