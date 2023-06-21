@@ -158,7 +158,7 @@ public class Personagem : MonoBehaviour
             }
             else
             {
-                RotacionarEmDirecaoAAlgo(CorpoMonge, transform.forward, 10f);
+                RotacionarEmDirecaoAAlgo(CorpoMonge.gameObject, this.transform.forward, 10f);
             }
 
         }
@@ -331,7 +331,9 @@ public class Personagem : MonoBehaviour
 
             Corpo.velocity = velocidadeAndar * 0.7f * frentePedra;
 
-            Debug.Log(Pedra.transform.position);
+            Debug.Log(PedraPosInicial);
+            Debug.Log(transform.position);
+            Debug.Log(PedraPosInicial - new Vector3(0, 0, (8 * PedraPosInicial.z)));
 
             if (Pedra.transform.position == PedraPosInicial + new Vector3(0, 0, (8 * PedraPosInicial.z)) || Pedra.transform.position == PedraPosInicial - new Vector3(0, 0, (8 * PedraPosInicial.z)) || Pedra.transform.position == PedraPosInicial + new Vector3((8 * PedraPosInicial.x), 0, 0) || Pedra.transform.position == PedraPosInicial - new Vector3((8 * PedraPosInicial.x), 0, 0))
             {
@@ -360,7 +362,7 @@ public class Personagem : MonoBehaviour
         GameObject[] PedrasLeves;
         PedrasLeves = GameObject.FindGameObjectsWithTag("PedraLeve");
 
-        float minimumDistance = 4.5f;
+        float minimumDistance = 6f;
 
         Transform PedraMaisPerto = null;
 
