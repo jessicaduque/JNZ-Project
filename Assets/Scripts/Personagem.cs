@@ -5,6 +5,8 @@ using UnityEngine;
 public class Personagem : MonoBehaviour
 {
     private Rigidbody Corpo;
+    private Animator Anim;
+    private GameObject CorpoMonge;
 
     [SerializeField]
     float sensibilidadeGiro = 500f;
@@ -13,8 +15,6 @@ public class Personagem : MonoBehaviour
     private float velocidadeFinal = 0;
     [SerializeField]
     bool esperandoSegundos = false;
-    [SerializeField]
-    float forcaPulo = 1000;
     public GameObject pezinho;
     private bool recebeuInputMover;
     public bool estaNoChao = true;
@@ -46,8 +46,10 @@ public class Personagem : MonoBehaviour
 
     void Start()
     {
+        Anim = GetComponentInChildren<Animator>();
         Corpo = GetComponent<Rigidbody>();
         transform.position = posInicial;
+        CorpoMonge = this.gameObject.transform.GetChild(0).gameObject;
     }
 
     void Update()
@@ -89,7 +91,8 @@ public class Personagem : MonoBehaviour
                     ReceberInputs();
                     Girar();
                     Corpo.constraints = RigidbodyConstraints.FreezeRotation;
-                    //AnimacaoAndar();
+                    AnimacaoAndar();
+                    VirarPersonagemMovimento();
                 }
 
 
@@ -117,18 +120,62 @@ public class Personagem : MonoBehaviour
         }
 
     }
-
-    /*void AnimacaoAndar()
+    void VirarPersonagemMovimento()
     {
         if (movimentoPermitido)
         {
-            if ((Input.GetKey(KeyCode.A) || Input.GetKey(KeyCode.D) || Input.GetAxis("Horizontal") != 0) && (!Input.GetKey(KeyCode.LeftShift) && Input.GetAxis("Run") == 0))
+            if (Input.GetAxis("Vertical") < 0 && (Input.GetAxis("Horizontal") < 0.6 && Input.GetAxis("Horizontal") > -0.6))
+            {
+                RotacionarEmDirecaoAAlgo(CorpoMonge, -transform.forward, 10f);
+            }
+            else if (Input.GetAxis("Vertical") > 0 && (Input.GetAxis("Horizontal") < 0.6 && Input.GetAxis("Horizontal") > -0.6))
+            {
+                RotacionarEmDirecaoAAlgo(CorpoMonge, transform.forward, 10f);
+            }
+            else if (Input.GetAxis("Vertical") == 0 && Input.GetAxis("Horizontal") > 0)
+            {
+                RotacionarEmDirecaoAAlgo(CorpoMonge, transform.right, 10f);
+            }
+            else if (Input.GetAxis("Vertical") == 0 && Input.GetAxis("Horizontal") < 0)
+            {
+                RotacionarEmDirecaoAAlgo(CorpoMonge, -transform.right, 10f);
+            }
+            else if(Input.GetAxis("Vertical") < 0 && Input.GetAxis("Horizontal") > 0)
+            {
+                RotacionarEmDirecaoAAlgo(CorpoMonge, -transform.forward + transform.right, 10f);
+            }
+            else if (Input.GetAxis("Vertical") < 0 && Input.GetAxis("Horizontal") < 0)
+            {
+                RotacionarEmDirecaoAAlgo(CorpoMonge, -transform.forward + -transform.right, 10f);
+            }
+            else if (Input.GetAxis("Vertical") > 0 && Input.GetAxis("Horizontal") > 0)
+            {
+                RotacionarEmDirecaoAAlgo(CorpoMonge, transform.forward + transform.right, 10f);
+            }
+            else if (Input.GetAxis("Vertical") > 0 && Input.GetAxis("Horizontal") < 0)
+            {
+                RotacionarEmDirecaoAAlgo(CorpoMonge, transform.forward + -transform.right, 10f);
+            }
+            else
+            {
+                RotacionarEmDirecaoAAlgo(CorpoMonge, transform.forward, 10f);
+            }
+
+        }
+
+    }
+
+    void AnimacaoAndar()
+    {
+        if (movimentoPermitido)
+        {
+            if ((Input.GetAxis("Horizontal") != 0 || Input.GetAxis("Vertical") != 0) && Input.GetAxis("Run") == 0)
             {
                 Anim.SetBool("Correndo", false);
                 Anim.SetBool("Andando", true);
-
+                
             }
-            else if ((Input.GetKey(KeyCode.A) || Input.GetKey(KeyCode.D) || Input.GetAxis("Horizontal") != 0) && (Input.GetKey(KeyCode.LeftShift) || Input.GetAxis("Run") > 0))
+            else if ((Input.GetAxis("Horizontal") != 0 || Input.GetAxis("Vertical") != 0) && Input.GetAxis("Run") > 0)
             {
                 Anim.SetBool("Andando", false);
                 Anim.SetBool("Correndo", true);
@@ -140,7 +187,7 @@ public class Personagem : MonoBehaviour
             }
 
         }
-    }*/
+    }
 
     void Mover()
     {
@@ -198,10 +245,10 @@ public class Personagem : MonoBehaviour
         }
     }
 
-    void RotacionarEmDirecaoAAlgo(Vector3 ondeOlhar, float velocidadeGiro)
+    void RotacionarEmDirecaoAAlgo(GameObject obj, Vector3 ondeOlhar, float velocidadeGiro)
     {
-        Vector3 newDirection = Vector3.RotateTowards(transform.forward, ondeOlhar, velocidadeGiro * Time.deltaTime, 0.0f);
-        transform.rotation = Quaternion.LookRotation(newDirection);
+        Vector3 newDirection = Vector3.RotateTowards(obj.transform.forward, ondeOlhar, velocidadeGiro * Time.deltaTime, 0.0f);
+        obj.transform.rotation = Quaternion.LookRotation(newDirection);
     }
 
     public bool SeTouroEstaDomado()
@@ -263,7 +310,7 @@ public class Personagem : MonoBehaviour
             float velocidadeGiroParaPedra = 1f;
             //float rapidezEmpurrar = 5f;
 
-            RotacionarEmDirecaoAAlgo(frentePedra, velocidadeGiroParaPedra);
+            RotacionarEmDirecaoAAlgo(this.gameObject, frentePedra, velocidadeGiroParaPedra);
             AnimacaoEmpurrarPedra();
             PrenderPersonagem();
             Pedra.GetComponent<Rigidbody>().mass = 1;
