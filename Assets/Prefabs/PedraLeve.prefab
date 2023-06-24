@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 8092943494459082243}
   - component: {fileID: 8092943494459082252}
   - component: {fileID: 2343102056279114375}
-  m_Layer: 0
+  m_Layer: 2
   m_Name: PedraLeve
   m_TagString: PedraLeve
   m_Icon: {fileID: 0}
@@ -122,6 +122,10 @@ PrefabInstance:
     - target: {fileID: 100000, guid: 89da2511a157be341bf8d02206204ff7, type: 3}
       propertyPath: m_Name
       value: Rock_4
+      objectReference: {fileID: 0}
+    - target: {fileID: 100000, guid: 89da2511a157be341bf8d02206204ff7, type: 3}
+      propertyPath: m_Layer
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 400000, guid: 89da2511a157be341bf8d02206204ff7, type: 3}
       propertyPath: m_RootOrder

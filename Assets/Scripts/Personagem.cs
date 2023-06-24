@@ -4,6 +4,8 @@ using UnityEngine;
 using System;
 public class Personagem : MonoBehaviour
 {
+    public LayerMask comRC;
+
     private Rigidbody Corpo;
     private Animator Anim;
     [SerializeField]
@@ -311,7 +313,7 @@ public class Personagem : MonoBehaviour
                 //Pedra.GetComponent<Pedra>().MudarEstadoMovimento();
                 PedraPosInicial = Pedra.transform.position;
                 empurrandoPedra = true;
-                
+                //AnimacaoEmpurrarPedra(0);
             }
         }
         else
@@ -321,7 +323,6 @@ public class Personagem : MonoBehaviour
 
             RotacionarEmDirecaoAAlgo(this.gameObject, frentePedra, velocidadeGiroParaPedra);
             RotacionarEmDirecaoAAlgo(CorpoMonge, frentePedra, velocidadeGiroParaPedra);
-            AnimacaoEmpurrarPedra();
             PrenderPersonagem();
             Pedra.GetComponent<Rigidbody>().mass = 1;
 
@@ -352,11 +353,12 @@ public class Personagem : MonoBehaviour
                 Pedra.GetComponent<Rigidbody>().velocity = new Vector3(0, 0, 0);
                 Pedra.GetComponent<Rigidbody>().mass = 1000000f;
                 movimentoPermitido = true;
+                //AnimacaoEmpurrarPedra(1);
                 empurrandoPedra = false;
             }
         }
     }
-    void AnimacaoEmpurrarPedra()
+    void AnimacaoEmpurrarPedra(int estado)
     {
         if (touroDomado)
         {
@@ -364,7 +366,16 @@ public class Personagem : MonoBehaviour
         }
         else
         {
-            // Sequência de animações sem touro
+            if(estado == 0)
+            {
+                Anim.SetBool("Andando", false);
+                Anim.SetBool("Correndo", false);
+                Anim.SetBool("Empurrando", true);
+            }
+            else
+            {
+                Anim.SetBool("Empurrando", false);
+            }
         }
     }
 
@@ -399,7 +410,9 @@ public class Personagem : MonoBehaviour
 
     bool ChecarSePodeMoverPedra(Transform Pedra)
     {
-        Vector3 direction = -transform.position;
+        frentePedra = EncontrarFrentePedra(Pedra);
+        Vector3 direction = frentePedra;
+        //Debug.Log(frentePedra);
 
         // Verificação que pode mover a pedra se for pesada
         if (Pedra.gameObject.tag == "PedraPesada")
@@ -410,29 +423,39 @@ public class Personagem : MonoBehaviour
             }
         }
 
+        //Debug.Log(Vector3.Angle(CorpoMonge.transform.forward, direction));
         // Verificação de que a rotação do player está dentro do escopo mínimo esperado para poder empurrar a pedra
-        if(Vector3.Angle(transform.forward, -direction) > 45)
+       
+        if (Vector3.Angle(CorpoMonge.transform.forward, direction) > 45)
         {
+            Debug.Log("entrou3");
             return false;
         }
 
-        // Verificação de se há pedras para onde será empurrado
         RaycastHit meuRay;
-        Debug.DrawRay(Pedra.position, -direction, Color.green, 100);
-        if (Physics.Raycast(Pedra.position, -direction, out meuRay, 10f))
+
+        
+        Debug.DrawRay(CorpoMonge.transform.position, -direction, Color.green, 100);
+        if (Physics.Raycast(Pedra.transform.position, -direction, out meuRay, 10f, comRC))
         {
+            Debug.Log("entrou1");
             string colisor = meuRay.collider.gameObject.tag;
+            Debug.Log(colisor);
             if (colisor != "Parede" && colisor != "PedraLeve" && colisor != "PedraPesada" && colisor != "Raiz1" && colisor != "Raiz2")
             {
+                Debug.Log("AA");
                 return true;
             }
             else
             {
+                Debug.Log("BB");
                 return false;
             }
         }
         else
         {
+            Debug.Log("CC");
+            Debug.Log("entrou1");
             return true;
         }
 
@@ -440,7 +463,7 @@ public class Personagem : MonoBehaviour
 
     Vector3 EncontrarFrentePedra(Transform Pedra)
     {
-        Vector3 direction = transform.position - Pedra.position;
+        Vector3 direction = CorpoMonge.transform.position - Pedra.position;
 
         // No eixo Z
         if (Mathf.Abs(direction.x) > Mathf.Abs(direction.z) && direction.z > -1.7f && direction.z < 1.7f)
