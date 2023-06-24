@@ -4,7 +4,7 @@ using UnityEngine;
 using System;
 public class Personagem : MonoBehaviour
 {
-    public LayerMask comRC;
+    public LayerMask semRC;
 
     private Rigidbody Corpo;
     private Animator Anim;
@@ -212,6 +212,7 @@ public class Personagem : MonoBehaviour
         Vector3 velocidadeCorrigida = velocidadeX * transform.right + velocidadeZ * transform.forward;
 
         Corpo.velocity = new Vector3(velocidadeCorrigida.x, Corpo.velocity.y, velocidadeCorrigida.z);
+        Debug.Log(Corpo.velocity);
     }
 
     void Girar()
@@ -435,8 +436,8 @@ public class Personagem : MonoBehaviour
         RaycastHit meuRay;
 
         
-        Debug.DrawRay(CorpoMonge.transform.position, -direction, Color.green, 100);
-        if (Physics.Raycast(Pedra.transform.position, -direction, out meuRay, 10f, comRC))
+        Debug.DrawRay(Pedra.transform.position, -direction, Color.green, 100);
+        if (Physics.Raycast(Pedra.transform.position, direction, out meuRay, 10f, ~semRC))
         {
             Debug.Log("entrou1");
             string colisor = meuRay.collider.gameObject.tag;
