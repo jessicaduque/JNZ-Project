@@ -28,7 +28,6 @@ public class Pedra : MonoBehaviour
     {
         if (podeMover)
         {
-            Debug.Log(frente);
             Player.GetComponent<Rigidbody>().velocity = rapidez * frente;
         }
     }

@@ -25,6 +25,9 @@ public class Personagem : MonoBehaviour
     bool touroDomado = false;
 
     [SerializeField]
+    private GameObject MaoColisor;
+
+    [SerializeField]
     private Vector3 posInicial;
 
     float tempo = 0.0f;
@@ -119,7 +122,7 @@ public class Personagem : MonoBehaviour
 
         if (Input.GetKey(KeyCode.LeftShift) || Input.GetAxis("Run") > 0)
         {
-            velocidadeFinal = velocidadeAndar * 1.7f;
+            velocidadeFinal = velocidadeAndar * 1.5f;
         }
         else
         {
@@ -212,7 +215,6 @@ public class Personagem : MonoBehaviour
         Vector3 velocidadeCorrigida = velocidadeX * transform.right + velocidadeZ * transform.forward;
 
         Corpo.velocity = new Vector3(velocidadeCorrigida.x, Corpo.velocity.y, velocidadeCorrigida.z);
-        Debug.Log(Corpo.velocity);
     }
 
     void Girar()
@@ -270,57 +272,24 @@ public class Personagem : MonoBehaviour
 
     void EmpurrarPedra()
     {
-        /*
         if (!empurrandoPedra)
         {
             Pedra = ChecarSePertoDePedra();
-            if (Pedra != null && (Input.GetKeyDown(KeyCode.E) || Input.GetKeyDown(KeyCode.JoystickButton3)) && ChecarSePodeMoverPedra(Pedra) && EncontrarFrentePedra(Pedra) != new Vector3(0, 0, 0))
+            if (Pedra != null && (Input.GetKeyDown(KeyCode.E) || Input.GetKeyDown(KeyCode.JoystickButton3)) && ChecarSePodeMoverPedra() && EncontrarFrentePedra(Pedra) != new Vector3(0, 0, 0))
             {
+                Pedra.gameObject.layer = LayerMask.NameToLayer("Default");
                 frentePedra = EncontrarFrentePedra(Pedra);
-                Pedra.GetComponent<Pedra>().MudarEstadoMovimento();
                 PedraPosInicial = Pedra.transform.position;
+                AnimacaoEmpurrarPedra(0);
+                Corpo.transform.position -= Corpo.transform.forward * 1;
+                MaoColisor.SetActive(true);
                 empurrandoPedra = true;
-
             }
         }
         else
         {
             float velocidadeGiroParaPedra = 1f;
-            float rapidezEmpurrar = 3f;
-
-            RotacionarEmDirecaoAAlgo(frentePedra, velocidadeGiroParaPedra);
-
-            AnimacaoEmpurrarPedra();
-
-            transform.position += rapidezEmpurrar * frentePedra * Time.deltaTime;
-            if (Mathf.Abs((Pedra.transform.position - PedraPosInicial).magnitude) > 8f)
-            {
-                Pedra.transform.position = new Vector3(Mathf.Round(Pedra.transform.position.x), Pedra.transform.position.y, Mathf.Round(Pedra.transform.position.z));
-                Pedra.GetComponent<Pedra>().MudarEstadoMovimento();
-                empurrandoPedra = false;
-            }
-        }
-        */
-
-
-        // SUGESTÃO DO FABIANO
-        
-        if (!empurrandoPedra)
-        {
-            Pedra = ChecarSePertoDePedra();
-            if (Pedra != null && (Input.GetKeyDown(KeyCode.E) || Input.GetKeyDown(KeyCode.JoystickButton3)) && ChecarSePodeMoverPedra(Pedra) && EncontrarFrentePedra(Pedra) != new Vector3(0, 0, 0))
-            {
-                frentePedra = EncontrarFrentePedra(Pedra);
-                //Pedra.GetComponent<Pedra>().MudarEstadoMovimento();
-                PedraPosInicial = Pedra.transform.position;
-                empurrandoPedra = true;
-                //AnimacaoEmpurrarPedra(0);
-            }
-        }
-        else
-        {
-            float velocidadeGiroParaPedra = 1f;
-            //float rapidezEmpurrar = 5f;
+            float rapidezEmpurrar = 0.5f;
 
             RotacionarEmDirecaoAAlgo(this.gameObject, frentePedra, velocidadeGiroParaPedra);
             RotacionarEmDirecaoAAlgo(CorpoMonge, frentePedra, velocidadeGiroParaPedra);
@@ -340,7 +309,7 @@ public class Personagem : MonoBehaviour
                 Corpo.constraints = RigidbodyConstraints.FreezePositionZ | RigidbodyConstraints.FreezePositionY | RigidbodyConstraints.FreezeRotation;
             }
 
-            Corpo.velocity = velocidadeAndar * 0.8f * frentePedra;
+            Corpo.velocity = velocidadeAndar * rapidezEmpurrar * frentePedra;
 
 
             float tpzI = PedraPosInicial.z;
@@ -353,8 +322,9 @@ public class Personagem : MonoBehaviour
                 Corpo.velocity = new Vector3(0, 0, 0);
                 Pedra.GetComponent<Rigidbody>().velocity = new Vector3(0, 0, 0);
                 Pedra.GetComponent<Rigidbody>().mass = 1000000f;
+                AnimacaoEmpurrarPedra(1);
+                MaoColisor.SetActive(false);
                 movimentoPermitido = true;
-                //AnimacaoEmpurrarPedra(1);
                 empurrandoPedra = false;
             }
         }
@@ -385,7 +355,7 @@ public class Personagem : MonoBehaviour
         GameObject[] PedrasLeves;
         PedrasLeves = GameObject.FindGameObjectsWithTag("PedraLeve");
 
-        float minimumDistance = 6f;
+        float minimumDistance = 6.5f;
 
         Transform PedraMaisPerto = null;
 
@@ -409,11 +379,11 @@ public class Personagem : MonoBehaviour
         }
     }
 
-    bool ChecarSePodeMoverPedra(Transform Pedra)
+    bool ChecarSePodeMoverPedra()
     {
+        //Pedra.gameObject.layer = LayerMask.NameToLayer("Ignore Raycast");
         frentePedra = EncontrarFrentePedra(Pedra);
         Vector3 direction = frentePedra;
-        //Debug.Log(frentePedra);
 
         // Verificação que pode mover a pedra se for pesada
         if (Pedra.gameObject.tag == "PedraPesada")
@@ -423,40 +393,26 @@ public class Personagem : MonoBehaviour
                 return false;
             }
         }
-
-        //Debug.Log(Vector3.Angle(CorpoMonge.transform.forward, direction));
-        // Verificação de que a rotação do player está dentro do escopo mínimo esperado para poder empurrar a pedra
-       
         if (Vector3.Angle(CorpoMonge.transform.forward, direction) > 45)
         {
-            Debug.Log("entrou3");
             return false;
         }
 
         RaycastHit meuRay;
-
-        
-        Debug.DrawRay(Pedra.transform.position, -direction, Color.green, 100);
         if (Physics.Raycast(Pedra.transform.position, direction, out meuRay, 10f, ~semRC))
         {
-            Debug.Log("entrou1");
             string colisor = meuRay.collider.gameObject.tag;
-            Debug.Log(colisor);
             if (colisor != "Parede" && colisor != "PedraLeve" && colisor != "PedraPesada" && colisor != "Raiz1" && colisor != "Raiz2")
             {
-                Debug.Log("AA");
                 return true;
             }
             else
             {
-                Debug.Log("BB");
                 return false;
             }
         }
         else
         {
-            Debug.Log("CC");
-            Debug.Log("entrou1");
             return true;
         }
 
@@ -530,7 +486,6 @@ public class Personagem : MonoBehaviour
     public bool EsperarSegundos(float segundos)
     {
         tempo += Time.deltaTime;
-        Debug.Log(tempo);
 
         if(tempo > segundos)
         {
@@ -550,6 +505,8 @@ public class Personagem : MonoBehaviour
     }
     public void PrenderPersonagem()
     {
+        Anim.SetBool("Correndo", false);
+        Anim.SetBool("Andando", false);
         movimentoPermitido = false;
         Corpo.velocity = new Vector3(0, 0, 0);
     }

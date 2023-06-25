@@ -11,7 +11,8 @@ public class TelaPretaFade : MonoBehaviour
     private bool fadeOut = false;
     private Vector3 ondeOlharPlayer;
     private Vector3 posDestinoPlayer;
-
+    [SerializeField]
+    private GameObject CorpoMonge;
 
     [SerializeField] float timeToFade;
 
@@ -37,6 +38,7 @@ public class TelaPretaFade : MonoBehaviour
                 {
                     Player.transform.position = posDestinoPlayer;
                     Player.transform.LookAt(ondeOlharPlayer);
+                    CorpoMonge.transform.rotation = Player.transform.rotation;
                     fadeIn = false;
                 }
             }
