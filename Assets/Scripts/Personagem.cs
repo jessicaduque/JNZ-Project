@@ -465,8 +465,11 @@ public class Personagem : MonoBehaviour
                 {
                     transform.position = infoCheckpoint[0];
                     transform.eulerAngles = infoCheckpoint[1];
+                    CorpoMonge.transform.eulerAngles = infoCheckpoint[1];
                     segundosParaEsperar = 1.2f;
                     Corpo.velocity = new Vector3(0f, 0f, 0f);
+                    Anim.SetBool("Correndo", false);
+                    Anim.SetBool("Andando", false);
 
                     GameObject.FindGameObjectWithTag("GameController").GetComponent<GerenciadorFase>().AtivacaoRaizes(raizesAtivadosCheckpoint);
 
