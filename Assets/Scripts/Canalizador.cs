@@ -6,6 +6,8 @@ public class Canalizador : MonoBehaviour
 {
     GameObject Player;
     bool trocandoRaizes = false;
+    [SerializeField]
+    private GameObject CorpoMonge;
 
     void Start()
     {
@@ -16,7 +18,7 @@ public class Canalizador : MonoBehaviour
     {
         if (trocandoRaizes)
         {
-            //GameObject.FindGameObjectWithTag("GameController").GetComponent<GerenciadorFase>().AtivacaoRaizes(GameObject.FindGameObjectWithTag("GameController").GetComponent<GerenciadorFase>().GetRaizesAtivados());
+            GameObject.FindGameObjectWithTag("GameController").GetComponent<GerenciadorFase>().AtivacaoRaizes(GameObject.FindGameObjectWithTag("GameController").GetComponent<GerenciadorFase>().GetRaizesAtivados());
         }
         else
         {
@@ -26,9 +28,8 @@ public class Canalizador : MonoBehaviour
                 {
                     AnimacaoAtivacaoPersonagem();
                     GameObject.FindGameObjectWithTag("GameController").GetComponent<GerenciadorFase>().TrocarRaizesAtivos();
-                    // Deletar dps
-                    GameObject.FindGameObjectWithTag("GameController").GetComponent<GerenciadorFase>().AtivacaoRaizes(GameObject.FindGameObjectWithTag("GameController").GetComponent<GerenciadorFase>().GetRaizesAtivados());
-                    //trocandoRaizes = true;
+                    CorpoMonge.GetComponent<CorpoMonge>().ReceberCanalizador(this.gameObject);
+                    trocandoRaizes = true;
                 }
             }
         }
@@ -36,7 +37,7 @@ public class Canalizador : MonoBehaviour
 
     void AnimacaoAtivacaoPersonagem()
     {
-        //Player.GetComponent<Animator>().SetTrigger();
+        Player.GetComponent<Personagem>().Anim.SetTrigger("Canalizar");
     }
 
     public void AcabouTroca()

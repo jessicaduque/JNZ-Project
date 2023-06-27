@@ -7,7 +7,7 @@ public class Personagem : MonoBehaviour
     public LayerMask semRC;
 
     private Rigidbody Corpo;
-    private Animator Anim;
+    public Animator Anim;
     [SerializeField]
     private GameObject CorpoMonge;
 
