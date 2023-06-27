@@ -19,6 +19,8 @@ public class Canalizador : MonoBehaviour
         if (trocandoRaizes)
         {
             GameObject.FindGameObjectWithTag("GameController").GetComponent<GerenciadorFase>().AtivacaoRaizes(GameObject.FindGameObjectWithTag("GameController").GetComponent<GerenciadorFase>().GetRaizesAtivados());
+            Player.GetComponent<Personagem>().RotacionarEmDirecaoAAlgo(CorpoMonge, new Vector3(transform.position.x, CorpoMonge.transform.position.y, transform.position.z), 2f);
+            //CorpoMonge.transform.LookAt(new Vector3(transform.position.x, CorpoMonge.transform.position.y, transform.position.z));
         }
         else
         {
@@ -28,6 +30,7 @@ public class Canalizador : MonoBehaviour
                 {
                     AnimacaoAtivacaoPersonagem();
                     GameObject.FindGameObjectWithTag("GameController").GetComponent<GerenciadorFase>().TrocarRaizesAtivos();
+                    Player.GetComponent<Personagem>().PrenderPersonagem();
                     CorpoMonge.GetComponent<CorpoMonge>().ReceberCanalizador(this.gameObject);
                     trocandoRaizes = true;
                 }
@@ -42,6 +45,7 @@ public class Canalizador : MonoBehaviour
 
     public void AcabouTroca()
     {
+        Player.GetComponent<Personagem>().DesprenderPersonagem();
         trocandoRaizes = false;
     }
 }

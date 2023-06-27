@@ -172,9 +172,12 @@ public class Personagem : MonoBehaviour
             }
             else
             {
-                RotacionarEmDirecaoAAlgo(CorpoMonge.gameObject, transform.forward, 3f);
+                RotacionarEmDirecaoAAlgo(CorpoMonge.gameObject, transform.forward, 2.5f);
             }
-
+        }
+        else
+        {
+            RotacionarEmDirecaoAAlgo(CorpoMonge.gameObject, transform.forward, 2.5f);
         }
 
     }
@@ -259,7 +262,7 @@ public class Personagem : MonoBehaviour
         }
     }
 
-    void RotacionarEmDirecaoAAlgo(GameObject obj, Vector3 ondeOlhar, float velocidadeGiro)
+    public void RotacionarEmDirecaoAAlgo(GameObject obj, Vector3 ondeOlhar, float velocidadeGiro)
     {
         Vector3 newDirection = Vector3.RotateTowards(obj.transform.forward, ondeOlhar, velocidadeGiro * Time.deltaTime, 0.0f);
         obj.transform.rotation = Quaternion.LookRotation(newDirection);
