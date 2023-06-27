@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class Canalizador : MonoBehaviour
 {
@@ -8,6 +9,8 @@ public class Canalizador : MonoBehaviour
     bool trocandoRaizes = false;
     [SerializeField]
     private GameObject CorpoMonge;
+    [SerializeField]
+    private Image BotaoInteracao;
 
     void Start()
     {
@@ -34,7 +37,12 @@ public class Canalizador : MonoBehaviour
                     GameObject.FindGameObjectWithTag("GameController").GetComponent<GerenciadorFase>().TrocarRaizesAtivos();
                     Player.GetComponent<Personagem>().PrenderPersonagem();
                     CorpoMonge.GetComponent<CorpoMonge>().ReceberCanalizador(this.gameObject);
+                    BotaoInteracao.gameObject.SetActive(false);
                     trocandoRaizes = true;
+                }
+                else
+                {
+                    BotaoInteracao.gameObject.SetActive(true);
                 }
             }
         }

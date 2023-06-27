@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 using System;
 public class Personagem : MonoBehaviour
 {
@@ -48,6 +49,9 @@ public class Personagem : MonoBehaviour
     Transform Pedra;
     Vector3 PedraPosInicial;
     public Vector3 frentePedra;
+
+    [SerializeField]
+    private Image BotaoInteracao;
 
 
     void Start()
@@ -278,15 +282,23 @@ public class Personagem : MonoBehaviour
         if (!empurrandoPedra)
         {
             Pedra = ChecarSePertoDePedra();
-            if (Pedra != null && (Input.GetKeyDown(KeyCode.E) || Input.GetKeyDown(KeyCode.JoystickButton3)) && ChecarSePodeMoverPedra() && EncontrarFrentePedra(Pedra) != new Vector3(0, 0, 0))
+            if (Pedra != null)
             {
-                Pedra.gameObject.layer = LayerMask.NameToLayer("Default");
-                frentePedra = EncontrarFrentePedra(Pedra);
-                PedraPosInicial = Pedra.transform.position;
-                AnimacaoEmpurrarPedra(0);
-                Corpo.transform.position -= Corpo.transform.forward * 1;
-                MaoColisor.SetActive(true);
-                empurrandoPedra = true;
+                if ((Input.GetKeyDown(KeyCode.E) || Input.GetKeyDown(KeyCode.JoystickButton3)) && ChecarSePodeMoverPedra() && EncontrarFrentePedra(Pedra) != new Vector3(0, 0, 0))
+                {
+                    Pedra.gameObject.layer = LayerMask.NameToLayer("Default");
+                    frentePedra = EncontrarFrentePedra(Pedra);
+                    PedraPosInicial = Pedra.transform.position;
+                    AnimacaoEmpurrarPedra(0);
+                    Corpo.transform.position -= Corpo.transform.forward * 0.8f;
+                    MaoColisor.SetActive(true);
+                    BotaoInteracao.gameObject.SetActive(false);
+                    empurrandoPedra = true;
+                }
+                else
+                {
+                    BotaoInteracao.gameObject.SetActive(true);
+                }
             }
         }
         else
@@ -470,6 +482,7 @@ public class Personagem : MonoBehaviour
                     Corpo.velocity = new Vector3(0f, 0f, 0f);
                     Anim.SetBool("Correndo", false);
                     Anim.SetBool("Andando", false);
+                    BotaoInteracao.gameObject.SetActive(false);
 
                     GameObject.FindGameObjectWithTag("GameController").GetComponent<GerenciadorFase>().AtivacaoRaizes(raizesAtivadosCheckpoint);
 

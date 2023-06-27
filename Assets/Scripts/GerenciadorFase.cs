@@ -37,6 +37,8 @@ public class GerenciadorFase : MonoBehaviour
 
         raizesAtivados = raizesIniciais;
         AtivacaoRaizes(raizesIniciais);
+
+        BotaoInteracao.gameObject.SetActive(false);
     }
 
     void Update()
