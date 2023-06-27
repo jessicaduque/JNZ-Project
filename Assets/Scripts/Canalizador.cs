@@ -19,12 +19,14 @@ public class Canalizador : MonoBehaviour
         if (trocandoRaizes)
         {
             GameObject.FindGameObjectWithTag("GameController").GetComponent<GerenciadorFase>().AtivacaoRaizes(GameObject.FindGameObjectWithTag("GameController").GetComponent<GerenciadorFase>().GetRaizesAtivados());
-            Player.GetComponent<Personagem>().RotacionarEmDirecaoAAlgo(CorpoMonge, new Vector3(transform.position.x, CorpoMonge.transform.position.y, transform.position.z), 2f);
-            //CorpoMonge.transform.LookAt(new Vector3(transform.position.x, CorpoMonge.transform.position.y, transform.position.z));
+            Vector3 relativePos = new Vector3(transform.position.x, Player.transform.position.y, transform.position.z) - Player.transform.position;
+            Quaternion toRotation = Quaternion.LookRotation(relativePos);
+            CorpoMonge.transform.rotation = Quaternion.Lerp(CorpoMonge.transform.rotation, toRotation, 3 * Time.deltaTime);
+
         }
         else
         {
-            if (Vector3.Distance(transform.position, Player.transform.position) < 3.8f)
+            if (Vector3.Distance(transform.position, Player.transform.position) < 4.5f)
             {
                 if (Input.GetKeyDown(KeyCode.E) || Input.GetKeyDown(KeyCode.JoystickButton3))
                 {
