@@ -424,7 +424,7 @@ public class Personagem : MonoBehaviour
         if (Physics.Raycast(Pedra.transform.position, direction, out meuRay, 10f, ~semRC))
         {
             string colisor = meuRay.collider.gameObject.tag;
-            if (colisor != "Parede" && colisor != "PedraLeve" && colisor != "PedraPesada" && colisor != "Raiz1" && colisor != "Raiz2")
+            if (colisor != "Parede" && colisor != "PedraLeve" && colisor != "PedraPesada" && colisor != "Raiz1" && colisor != "Raiz2" && colisor != "Canalizador")
             {
                 return true;
             }
