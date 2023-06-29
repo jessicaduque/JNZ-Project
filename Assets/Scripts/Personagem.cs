@@ -540,8 +540,6 @@ public class Personagem : MonoBehaviour
                     Anim.SetBool("Andando", false);
                     BotaoInteracao.gameObject.SetActive(false);
 
-                    
-
                     esperandoSegundos = true;
                 }
             }
