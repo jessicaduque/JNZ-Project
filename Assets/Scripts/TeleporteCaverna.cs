@@ -14,6 +14,8 @@ public class TeleporteCaverna : MonoBehaviour
     private GameObject Player;
     private bool personagemPreso = false;
 
+    [SerializeField]
+    List<GameObject> ItensParaDestruir = new List<GameObject>();
 
     private void Start()
     {
@@ -40,6 +42,15 @@ public class TeleporteCaverna : MonoBehaviour
             TelaPretaPanel.GetComponent<TelaPretaFade>().FadeIn(Destino, ondeOlhar);
             Player.GetComponent<Personagem>().PrenderPersonagem();
             personagemPreso = true;
+
+            for(int i = 0; i < ItensParaDestruir.Count; i++)
+            {
+                if(ItensParaDestruir[i] != null)
+                {
+                    Destroy(ItensParaDestruir[i]);
+                }
+                
+            }
         }   
     }
 }
