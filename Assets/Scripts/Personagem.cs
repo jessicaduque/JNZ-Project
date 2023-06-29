@@ -310,11 +310,10 @@ public class Personagem : MonoBehaviour
                     semPedra = false;
                     if ((Input.GetKeyDown(KeyCode.E) || Input.GetKeyDown(KeyCode.JoystickButton3)))
                     {
-                        //Pedra.gameObject.layer = LayerMask.NameToLayer("Default");
                         frentePedra = EncontrarFrentePedra(Pedra);
                         PedraPosInicial = Pedra.transform.position;
                         AnimacaoEmpurrarPedra(0);
-                        Corpo.transform.position -= Corpo.transform.forward * 0.6f;
+                        Corpo.transform.position -= Corpo.transform.forward * 0.5f;
                         MaoColisor.SetActive(true);
                         BotaoInteracao.gameObject.SetActive(false);
                         empurrandoPedra = true;
@@ -541,12 +540,7 @@ public class Personagem : MonoBehaviour
                     Anim.SetBool("Andando", false);
                     BotaoInteracao.gameObject.SetActive(false);
 
-                    GameObject.FindGameObjectWithTag("GameController").GetComponent<GerenciadorFase>().AtivacaoRaizes(raizesAtivadosCheckpoint);
-
-                    for (int i=0; i < PedrasParaReset.Length; i++)
-                    {
-                        PedrasParaReset[i].transform.position = PedrasParaReset[i].GetComponent<Pedra>().PosicaoInicial;
-                    }
+                    
 
                     esperandoSegundos = true;
                 }
@@ -589,5 +583,15 @@ public class Personagem : MonoBehaviour
     public void DesprenderPersonagem()
     {
         movimentoPermitido = true;
+    }
+
+    public void TerminarResetPuzzle()
+    {
+        GameObject.FindGameObjectWithTag("GameController").GetComponent<GerenciadorFase>().AtivacaoRaizes(raizesAtivadosCheckpoint);
+
+        for (int i = 0; i < PedrasParaReset.Length; i++)
+        {
+            PedrasParaReset[i].transform.position = PedrasParaReset[i].GetComponent<Pedra>().PosicaoInicial;
+        }
     }
 }
