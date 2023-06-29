@@ -55,6 +55,9 @@ public class Personagem : MonoBehaviour
     [SerializeField]
     private Image BotaoInteracao;
 
+    bool semPedra = true;
+    bool longeCanalizador = true;
+
 
     void Start()
     {
@@ -82,7 +85,7 @@ public class Personagem : MonoBehaviour
 
         // O player só pode se mover se não estiver no meio de empurrar uma pedra
         ControleMovimento();
-
+        ControleBotaoInteracao();
         // Puzzle das pedras
         ResetarPuzzlePedras();
         EmpurrarPedra();
@@ -284,6 +287,15 @@ public class Personagem : MonoBehaviour
         return touroDomado;
     }
 
+    void ControleBotaoInteracao()
+    {
+        PertoCanalizador();
+        if(longeCanalizador && semPedra)
+        {
+            BotaoInteracao.gameObject.SetActive(false);
+        }
+    }
+
     void EmpurrarPedra()
     {
         if (!empurrandoPedra)
@@ -291,20 +303,28 @@ public class Personagem : MonoBehaviour
             Pedra = ChecarSePertoDePedra();
             if (Pedra != null)
             {
-                if ((Input.GetKeyDown(KeyCode.E) || Input.GetKeyDown(KeyCode.JoystickButton3)) && ChecarSePodeMoverPedra() && EncontrarFrentePedra(Pedra) != new Vector3(0, 0, 0))
+                if (ChecarSePodeMoverPedra() && EncontrarFrentePedra(Pedra) != new Vector3(0, 0, 0))
                 {
-                    Pedra.gameObject.layer = LayerMask.NameToLayer("Default");
-                    frentePedra = EncontrarFrentePedra(Pedra);
-                    PedraPosInicial = Pedra.transform.position;
-                    AnimacaoEmpurrarPedra(0);
-                    Corpo.transform.position -= Corpo.transform.forward * 0.6f;
-                    MaoColisor.SetActive(true);
-                    BotaoInteracao.gameObject.SetActive(false);
-                    empurrandoPedra = true;
+                    semPedra = false;
+                    if ((Input.GetKeyDown(KeyCode.E) || Input.GetKeyDown(KeyCode.JoystickButton3)))
+                    {
+                        //Pedra.gameObject.layer = LayerMask.NameToLayer("Default");
+                        frentePedra = EncontrarFrentePedra(Pedra);
+                        PedraPosInicial = Pedra.transform.position;
+                        AnimacaoEmpurrarPedra(0);
+                        Corpo.transform.position -= Corpo.transform.forward * 0.6f;
+                        MaoColisor.SetActive(true);
+                        BotaoInteracao.gameObject.SetActive(false);
+                        empurrandoPedra = true;
+                    }
+                    else
+                    {
+                        BotaoInteracao.gameObject.SetActive(true);
+                    }
                 }
                 else
                 {
-                    BotaoInteracao.gameObject.SetActive(true);
+                    semPedra = true;
                 }
             }
         }
@@ -369,6 +389,35 @@ public class Personagem : MonoBehaviour
             {
                 Anim.SetBool("Empurrando", false);
             }
+        }
+    }
+
+    void PertoCanalizador()
+    {
+        GameObject[] Canalizadores;
+        Canalizadores = GameObject.FindGameObjectsWithTag("Canalizador");
+
+        float minimumDistance = 4.5f;
+
+        Transform CanalizadorMaisPerto = null;
+
+        foreach (GameObject can in Canalizadores)
+        {
+            float distance = Vector3.Distance(transform.position, can.transform.position);
+            if (distance < minimumDistance)
+            {
+                minimumDistance = distance;
+                CanalizadorMaisPerto = can.transform;
+            }
+        }
+
+        if (CanalizadorMaisPerto != null)
+        {
+            longeCanalizador = false;
+        }
+        else
+        {
+            longeCanalizador = true;
         }
     }
 
