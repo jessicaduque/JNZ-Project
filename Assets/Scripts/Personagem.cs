@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using System;
+using UnityEngine.SceneManagement;
+
 public class Personagem : MonoBehaviour
 {
     public LayerMask semRC;
@@ -255,6 +257,11 @@ public class Personagem : MonoBehaviour
         {
             pisandoEmRuinas = true;
             estaNoChao = true;
+        }
+
+        if (colidiu.gameObject.tag == "GameOver")
+        {
+            SceneManager.LoadScene(0);
         }
     }
 

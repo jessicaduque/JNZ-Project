@@ -14,6 +14,7 @@ TagManager:
   - Raiz2
   - Canalizador
   - PuzzleRuinas
+  - GameOver
   layers:
   - Default
   - TransparentFX
