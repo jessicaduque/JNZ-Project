@@ -313,7 +313,7 @@ public class Personagem : MonoBehaviour
                         frentePedra = EncontrarFrentePedra(Pedra);
                         PedraPosInicial = Pedra.transform.position;
                         AnimacaoEmpurrarPedra(0);
-                        Corpo.transform.position -= Corpo.transform.forward * 0.6f;
+                        Corpo.transform.position -= Corpo.transform.forward * 0.8f;
                         MaoColisor.SetActive(true);
                         BotaoInteracao.gameObject.SetActive(false);
                         empurrandoPedra = true;
