@@ -399,7 +399,7 @@ public class Personagem : MonoBehaviour
         GameObject[] Canalizadores;
         Canalizadores = GameObject.FindGameObjectsWithTag("Canalizador");
 
-        float minimumDistance = 4.5f;
+        float minimumDistance = 5f;
 
         Transform CanalizadorMaisPerto = null;
 

@@ -112,6 +112,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   CorpoMonge: {fileID: 0}
+  BotaoInteracao: {fileID: 0}
+  EfeitosPrefab: {fileID: 5062587367293580837, guid: 6dfcd5824382df049a9978301d144778, type: 3}
 --- !u!1001 &463727737060923947
 PrefabInstance:
   m_ObjectHideFlags: 0

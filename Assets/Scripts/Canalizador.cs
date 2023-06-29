@@ -12,6 +12,10 @@ public class Canalizador : MonoBehaviour
     [SerializeField]
     private Image BotaoInteracao;
 
+    [SerializeField]
+    GameObject EfeitosPrefab;
+    GameObject Efeitos;
+
     void Start()
     {
         Player = GameObject.FindGameObjectWithTag("Player");
@@ -25,11 +29,12 @@ public class Canalizador : MonoBehaviour
             Vector3 relativePos = new Vector3(transform.position.x, Player.transform.position.y, transform.position.z) - Player.transform.position;
             Quaternion toRotation = Quaternion.LookRotation(relativePos);
             CorpoMonge.transform.rotation = Quaternion.Lerp(CorpoMonge.transform.rotation, toRotation, 3 * Time.deltaTime);
+            GetComponent<EfeitoVisualCanalizar>().Canalizando();
 
         }
         else
         {
-            if (Vector3.Distance(transform.position, Player.transform.position) < 4.5f)
+            if (Vector3.Distance(transform.position, Player.transform.position) < 5f)
             {
                 if (Input.GetKeyDown(KeyCode.E) || Input.GetKeyDown(KeyCode.JoystickButton3))
                 {
@@ -39,6 +44,7 @@ public class Canalizador : MonoBehaviour
                     CorpoMonge.GetComponent<CorpoMonge>().ReceberCanalizador(this.gameObject);
                     BotaoInteracao.gameObject.SetActive(false);
                     trocandoRaizes = true;
+                    Efeitos = Instantiate(EfeitosPrefab, transform.position, Quaternion.identity);
                 }
                 else
                 {
@@ -55,7 +61,9 @@ public class Canalizador : MonoBehaviour
 
     public void AcabouTroca()
     {
+        GetComponent<EfeitoVisualCanalizar>().NaoCanalizando();
         Player.GetComponent<Personagem>().DesprenderPersonagem();
+        Destroy(Efeitos);
         trocandoRaizes = false;
     }
 }
