@@ -149,19 +149,19 @@ public class Personagem : MonoBehaviour
     {
         if (movimentoPermitido)
         {
-            if (Input.GetAxis("Vertical") < 0 && (Input.GetAxis("Horizontal") < 0.6 && Input.GetAxis("Horizontal") > -0.6))
+            if (Input.GetAxis("Vertical") < 0 && (Input.GetAxis("Horizontal") < 0.3 && Input.GetAxis("Horizontal") > -0.3))
             {
                 RotacionarEmDirecaoAAlgo(CorpoMonge, -transform.forward, 10f);
             }
-            else if (Input.GetAxis("Vertical") > 0 && (Input.GetAxis("Horizontal") < 0.6 && Input.GetAxis("Horizontal") > -0.6))
+            else if (Input.GetAxis("Vertical") > 0 && (Input.GetAxis("Horizontal") < 0.3 && Input.GetAxis("Horizontal") > -0.3))
             {
                 RotacionarEmDirecaoAAlgo(CorpoMonge, transform.forward, 10f);
             }
-            else if (Input.GetAxis("Vertical") == 0 && Input.GetAxis("Horizontal") > 0)
+            else if (Input.GetAxis("Vertical") > -0.3f && Input.GetAxis("Vertical") < 0.3f && Input.GetAxis("Horizontal") > 0)
             {
                 RotacionarEmDirecaoAAlgo(CorpoMonge, transform.right, 10f);
             }
-            else if (Input.GetAxis("Vertical") == 0 && Input.GetAxis("Horizontal") < 0)
+            else if (Input.GetAxis("Vertical") > -0.3f && Input.GetAxis("Vertical") < 0.3f && Input.GetAxis("Horizontal") < 0)
             {
                 RotacionarEmDirecaoAAlgo(CorpoMonge, -transform.right, 10f);
             }
