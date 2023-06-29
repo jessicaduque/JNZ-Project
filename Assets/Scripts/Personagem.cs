@@ -36,6 +36,9 @@ public class Personagem : MonoBehaviour
     float tempo = 0.0f;
     float segundosParaEsperar;
 
+    Vector3 teleporteCavernaFora;
+    Vector3 teleporteForaCaverna;
+
     // Estado da fase
     enum EstadoFase { SemPuzzleSemDom = 0, PuzzlePedrasSemDom = 1, PuzzlePedrasComDom = 2, PuzzleRuinas = 3, SemPuzzleComDom = 4};
     private bool pisandoEmRuinas = false;
@@ -181,7 +184,7 @@ public class Personagem : MonoBehaviour
             }
             else
             {
-                RotacionarEmDirecaoAAlgo(CorpoMonge.gameObject, transform.forward, 2.5f);
+                CorpoMonge.transform.rotation = transform.rotation;
             }
         }
         else
@@ -262,10 +265,6 @@ public class Personagem : MonoBehaviour
             estaNoChao = true;
         }
 
-        if (colidiu.gameObject.tag == "GameOver")
-        {
-            SceneManager.LoadScene(0);
-        }
     }
 
     private void OnTriggerExit(Collider colidiu)
