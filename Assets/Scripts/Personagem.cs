@@ -39,6 +39,9 @@ public class Personagem : MonoBehaviour
     Vector3 teleporteCavernaFora;
     Vector3 teleporteForaCaverna;
 
+    [SerializeField]
+    private GameObject TelaPretaPanel;
+
     // Estado da fase
     enum EstadoFase { SemPuzzleSemDom = 0, PuzzlePedrasSemDom = 1, PuzzlePedrasComDom = 2, PuzzleRuinas = 3, SemPuzzleComDom = 4};
     private bool pisandoEmRuinas = false;
@@ -530,9 +533,8 @@ public class Personagem : MonoBehaviour
             {
                 if(infoCheckpoint[0] != new Vector3(0f, 0f, 0f))
                 {
-                    transform.position = infoCheckpoint[0];
-                    transform.eulerAngles = infoCheckpoint[1];
-                    CorpoMonge.transform.eulerAngles = infoCheckpoint[1];
+                    TelaPretaPanel.GetComponent<TelaPretaFade>().enabled = true;
+                    TelaPretaPanel.GetComponent<TelaPretaFade>().FadeIn(infoCheckpoint[0], infoCheckpoint[1], true);
                     segundosParaEsperar = 1.2f;
                     Corpo.velocity = new Vector3(0f, 0f, 0f);
                     Anim.SetBool("Correndo", false);

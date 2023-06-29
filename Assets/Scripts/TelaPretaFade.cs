@@ -13,6 +13,7 @@ public class TelaPretaFade : MonoBehaviour
     private Vector3 posDestinoPlayer;
     [SerializeField]
     private GameObject CorpoMonge;
+    bool usarEuler;
 
     [SerializeField] float timeToFade;
 
@@ -37,8 +38,17 @@ public class TelaPretaFade : MonoBehaviour
                 if (canvasGroup.alpha >= 1)
                 {
                     Player.transform.position = posDestinoPlayer;
-                    Player.transform.LookAt(ondeOlharPlayer);
-                    CorpoMonge.transform.rotation = Player.transform.rotation;
+                    if (usarEuler)
+                    {
+                        CorpoMonge.transform.eulerAngles = ondeOlharPlayer;
+                        Player.transform.eulerAngles = CorpoMonge.transform.eulerAngles;
+                    }
+                    else
+                    {
+                        Player.transform.LookAt(ondeOlharPlayer);
+                        CorpoMonge.transform.rotation = Player.transform.rotation;
+                    }
+                    
                     fadeIn = false;
                 }
             }
@@ -56,11 +66,12 @@ public class TelaPretaFade : MonoBehaviour
         }
     }
 
-    public void FadeIn(Vector3 posDestino, Vector3 ondeOlhar)
+    public void FadeIn(Vector3 posDestino, Vector3 ondeOlhar, bool euler)
     {
-        fadeIn = true;
+        usarEuler = euler;
         posDestinoPlayer = posDestino;
         ondeOlharPlayer = ondeOlhar;
+        fadeIn = true;
     }
 
     public void FadeOut()

@@ -39,7 +39,7 @@ public class TeleporteCaverna : MonoBehaviour
         if(collision.gameObject.tag == "Player")
         {
             TelaPretaPanel.GetComponent<TelaPretaFade>().enabled = true;
-            TelaPretaPanel.GetComponent<TelaPretaFade>().FadeIn(Destino, ondeOlhar);
+            TelaPretaPanel.GetComponent<TelaPretaFade>().FadeIn(Destino, ondeOlhar, false);
             Player.GetComponent<Personagem>().PrenderPersonagem();
             personagemPreso = true;
 
