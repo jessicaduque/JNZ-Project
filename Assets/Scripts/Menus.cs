@@ -5,6 +5,9 @@ using UnityEngine.SceneManagement;
 
 public class Menus : MonoBehaviour
 {
+    [SerializeField] private GameObject credits;
+    [SerializeField] private GameObject menu;
+
     private void Start()
     {
         Cursor.visible = true;
@@ -35,6 +38,18 @@ public class Menus : MonoBehaviour
     public void Recomeçar()
     {
         SceneManager.LoadScene(0);
+    }
+
+    public void MostrarCreditos()
+    {
+        menu.SetActive(false);
+        credits.SetActive(true);
+    }
+
+    public void Voltar()
+    {
+        menu.SetActive(true);
+        credits.SetActive(false);
     }
 
 }
